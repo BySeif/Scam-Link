@@ -13,128 +13,117 @@
   --pink2:#ffd6eb;
   --accent:#ff2e88;
   --btn1:#ff4d9e;
+  --paper:#fff7fb;
 }
+
+/* KEEP PAGE FIXED — only final card scrolls */
 html,body{height:100%;margin:0;padding:0;background:linear-gradient(160deg,var(--pink1),var(--pink2));-webkit-font-smoothing:antialiased;}
-/* Prevent page scrolling; we'll allow internal scrolling only on final view */
 body{overflow:hidden;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:#222;display:flex;align-items:center;justify-content:center;padding:18px;}
 
-/* app area that we replace completely each step */
-#app {
-  width:100%;
-  max-width:760px;
-  box-sizing:border-box;
-}
+/* app area */
+#app { width:100%; max-width:760px; box-sizing:border-box; }
 
-/* basic glass card used for start and question */
-.card {
-  background:rgba(255,255,255,0.12);
-  backdrop-filter: blur(14px);
-  padding:28px;
-  border-radius:28px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.14);
-  text-align:center;
-  margin:0 auto;
-}
+/* common glass card */
+.card { background:rgba(255,255,255,0.12); backdrop-filter: blur(14px); padding:28px; border-radius:28px; box-shadow:0 20px 50px rgba(0,0,0,0.14); text-align:center; margin:0 auto; }
 
-/* start envelope */
-#envelope {
-  width:220px;
-  max-width:82vw;
-  cursor:pointer;
-  border-radius:14px;
-  filter:drop-shadow(0 12px 26px rgba(0,0,0,0.18));
-  transition:transform .28s ease;
-}
-#envelope:hover{ transform: translateY(-6px) rotate(-2deg) scale(1.02); }
+/* envelope */
+#envelope { width:220px; max-width:82vw; cursor:pointer; border-radius:14px; filter:drop-shadow(0 12px 26px rgba(0,0,0,0.18)); transition:transform .28s ease; }
+#envelope:hover { transform: translateY(-6px) rotate(-2deg) scale(1.02); }
 
-.title {
-  font-family:"Playfair Display", serif;
-  color:var(--accent);
-  margin:12px 0 8px 0;
-  font-size:clamp(26px,4.6vw,44px);
-}
+.title { font-family:"Playfair Display", serif; color:var(--accent); margin:12px 0 8px 0; font-size:clamp(26px,4.6vw,44px); }
 
 /* open button */
-.openBtn {
-  background:linear-gradient(90deg,var(--btn1),#ff6fb0);
-  color:white;border:none;padding:13px 36px;border-radius:36px;font-size:18px;
-  box-shadow:0 10px 26px rgba(255,77,158,0.24);cursor:pointer;
-}
+.openBtn { background:linear-gradient(90deg,var(--btn1),#ff6fb0); color:white; border:none; padding:13px 36px; border-radius:36px; font-size:18px; box-shadow:0 10px 26px rgba(255,77,158,0.24); cursor:pointer; }
 .pulse{ animation:pulse 1.6s infinite; }
 @keyframes pulse{ 0%{transform:scale(1);}50%{transform:scale(1.07);}100%{transform:scale(1);} }
 
 /* question image */
-#mainPhoto {
-  width:100%;
-  max-height:54vh; /* controls main image size so buttons stay visible */
-  object-fit:cover;border-radius:22px;box-shadow:0 18px 40px rgba(0,0,0,0.18);margin-bottom:16px;
-}
+#mainPhoto { width:100%; max-height:54vh; object-fit:cover; border-radius:22px; box-shadow:0 18px 40px rgba(0,0,0,0.18); margin-bottom:16px; }
 
-/* button row styles */
-.btnRow{ display:flex; gap:14px; justify-content:center; align-items:center; margin-top:8px; position:relative; }
+/* button row */
+.btnRow { display:flex; gap:14px; justify-content:center; align-items:center; margin-top:8px; position:relative; }
 .yes, .no { border:none; padding:12px 26px; border-radius:32px; font-size:18px; cursor:pointer; }
 .yes { background:linear-gradient(90deg,#ff476e,#ff2e88); color:white; box-shadow:0 10px 22px rgba(255,46,136,.22); transform-origin:center; }
 .no  { background:#5e5e5e; color:white; box-shadow:0 6px 14px rgba(0,0,0,0.12); position:relative; }
 
-/* final card: THIS is the only scrollable area on the page */
-.finalCardWrap {
-  width:100%;
-  max-height: calc(100vh - 36px);
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  padding:0;
-}
-.finalCard {
-  width:100%;
-  overflow:auto; /* only this card scrolls */
-  -webkit-overflow-scrolling:touch;
-  padding:28px;
-  box-sizing:border-box;
-  border-radius:26px;
-  background:rgba(255,255,255,0.12);
-  backdrop-filter:blur(14px);
-  box-shadow:0 22px 56px rgba(0,0,0,0.16);
+/* tooltip bubble for No messages (safer than changing button text) */
+.noTip {
+  position:fixed;
+  background:#444;
+  color:white;
+  padding:10px 14px;
+  border-radius:22px;
+  box-shadow:0 10px 26px rgba(0,0,0,0.2);
+  transform:translate(-50%,-50%);
+  z-index:99999;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .18s ease, transform .18s ease;
 }
 
-/* final text + image */
-#finalText {
-  font-family:"Playfair Display", serif;
-  font-size:clamp(22px,5.2vw,40px);
-  color:var(--accent);
-  text-shadow:0 8px 26px rgba(255,46,136,0.12);
-  margin:12px 6px; line-height:1.06;
-}
-#finalPhoto {
-  width:100%;
-  max-height:56vh; /* controlled */
-  object-fit:cover;border-radius:22px;margin-top:12px;box-shadow:0 20px 50px rgba(0,0,0,0.22);
-}
+/* final: only this card scrolls */
+.finalCardWrap { width:100%; max-height: calc(100vh - 36px); display:flex; align-items:flex-start; justify-content:center; padding:0; }
+.finalCard { width:100%; overflow:auto; -webkit-overflow-scrolling:touch; padding:28px; box-sizing:border-box; border-radius:26px; background:rgba(255,255,255,0.12); backdrop-filter:blur(14px); box-shadow:0 22px 56px rgba(0,0,0,0.16); }
 
-/* extra section inside finalCard */
-.extraHeader { font-family:"Playfair Display", serif; color:var(--accent); font-size:18px; margin-bottom:12px; }
+/* final headline / small "Love youu" */
+#finalTop {
+  text-align:center;
+  margin-bottom:12px;
+}
+#finalTop .loveSmall { font-family:'Poppins',sans-serif; color:#ff2e88; margin-bottom:8px; }
+
+/* main final text */
+#finalText { font-family:"Playfair Display", serif; font-size:clamp(22px,5.2vw,40px); color:#fff; text-shadow:0 8px 26px rgba(255,46,136,0.12); margin:8px 6px; line-height:1.06; opacity:1; transition:opacity .22s; }
+
+/* little scroll arrow hint */
+#scrollHint { margin-top:8px; font-size:20px; color:rgba(255,255,255,0.9); animation:floatDown 1.4s infinite; }
+@keyframes floatDown { 0%{transform:translateY(0);}50%{transform:translateY(6px);}100%{transform:translateY(0);} }
+
+/* final image */
+#finalPhoto { width:100%; max-height:56vh; object-fit:cover; border-radius:22px; margin-top:12px; box-shadow:0 20px 50px rgba(0,0,0,0.22); }
+
+/* extra (flowers) area inside finalCard */
+.extraHeader { font-family:"Playfair Display", serif; color:var(--accent); font-size:18px; margin-top:18px; margin-bottom:12px; text-align:center; }
 #letterClosed { background:linear-gradient(90deg,#ffffff,#fff0f8); border-radius:14px; padding:12px 18px; display:inline-block; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,0.12); }
-#bouquetImg { max-width:360px; width:90%; border-radius:18px; box-shadow:0 12px 30px rgba(0,0,0,0.18); display:none; margin-top:12px; }
-#emojiBouquet { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
-.rose { font-size:26px; transform:translateY(12px) scale(.95); opacity:0; transition:transform .6s, opacity .6s; }
-.bouquetVisible .rose { transform:translateY(0) scale(1); opacity:1; }
 
-/* framed inline letter box */
+/* bouquet area (styled 'paper' background so it looks like a proper bouquet) */
+#bouquetWrap { margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px; flex-direction:column; }
+
+/* bouquet paper background */
+.bouquetPaper {
+  width:86%;
+  max-width:460px;
+  background:linear-gradient(180deg,#fff5f8,#ffeef6);
+  border-radius:18px;
+  padding:14px 12px;
+  box-shadow:0 14px 30px rgba(0,0,0,0.12);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+
+/* the 'bouquet' itself built from emoji roses — arranged tight and styled */
+.bouquetRow { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
+.rose { font-size:28px; transform:translateY(12px) scale(.95); opacity:0; transition:transform .6s, opacity .6s; }
+.bouquetPaper.bloom .rose { transform:translateY(0) scale(1); opacity:1; }
+
+/* optional bouquet image (if you later upload a real picture called bouquet.jpg) */
+#bouquetImg { width:90%; max-width:420px; border-radius:14px; display:none; box-shadow:0 12px 30px rgba(0,0,0,0.12); }
+
+/* inline framed letter (revealed after modal is closed) */
 .letter-frame { border:2px dashed rgba(255,46,136,0.12); padding:16px; border-radius:10px; background:linear-gradient(180deg,#fffdfc,#fff7fb); margin-top:14px; text-align:left; color:#222; white-space:pre-line; }
 
-/* modal letter */
-#letterModal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.28); z-index:99999; }
-#letterCard{ width:min(92vw,720px); border-radius:18px; padding:22px; background:linear-gradient(180deg,#fff,#fff8fb); box-shadow:0 30px 80px rgba(0,0,0,0.35); transform:scale(.98); transition:transform .22s; position:relative; }
-#letterCard.show{ transform:scale(1); }
-#closeLetter{ position:absolute; right:14px; top:10px; border:none; background:transparent; font-size:22px; cursor:pointer; }
+/* modal */
+#letterModal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.28); z-index:99999; }
+#letterCard { width:min(92vw,720px); border-radius:18px; padding:22px; background:linear-gradient(180deg,#fff,#fff8fb); box-shadow:0 30px 80px rgba(0,0,0,0.35); transform:scale(.98); transition:transform .22s; position:relative; }
+#letterCard.show { transform:scale(1); }
+#closeLetter { position:absolute; right:14px; top:10px; border:none; background:transparent; font-size:22px; cursor:pointer; }
 
-/* hearts & confetti */
-.floating-heart { position:fixed; bottom:-20px; font-size:26px; pointer-events:none; animation:floatUp linear forwards; z-index:9998; }
-@keyframes floatUp { to{ transform:translateY(-120vh) rotate(180deg); opacity:0; } }
-.confetti-piece { position:fixed; top:-20px; width:8px; height:12px; animation:fall linear forwards; pointer-events:none; z-index:9997; }
-@keyframes fall { to{ transform:translateY(120vh) rotate(360deg); } }
+/* hearts/confetti (unchanged) */
+.floating-heart{ position:fixed; bottom:-20px; font-size:26px; pointer-events:none; animation:floatUp linear forwards; z-index:9998; }
+@keyframes floatUp{ to{ transform:translateY(-120vh) rotate(180deg); opacity:0; } }
+.confetti-piece{ position:fixed; top:-20px; width:8px; height:12px; animation:fall linear forwards; pointer-events:none; z-index:9997; }
+@keyframes fall{ to{ transform:translateY(120vh) rotate(360deg); } }
 
-/* responsive tweaks */
+/* small screen tweaks */
 @media(min-width:900px){
   #mainPhoto{ max-width:520px; }
   #finalPhoto{ max-width:640px; }
@@ -144,7 +133,7 @@ body{overflow:hidden;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Ro
 <body>
 
 <div id="app">
-  <!-- START: we show only this card initially -->
+  <!-- START -->
   <div class="card" id="startCard">
     <img id="envelope" src="envelope.png.jpg" alt="Envelope for Alya" onclick="openQuestion()" />
     <h2 class="title">For Alya💗💌</h2>
@@ -152,32 +141,34 @@ body{overflow:hidden;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Ro
   </div>
 </div>
 
-<!-- letter modal (hidden) -->
+<!-- tooltip bubble for No messages -->
+<div id="noTip" class="noTip" aria-hidden="true"></div>
+
+<!-- the letter modal -->
 <div id="letterModal" aria-hidden="true">
   <div id="letterCard" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
     <button id="closeLetter" onclick="closeModal()">✕</button>
     <div style="text-align:center; margin-bottom:8px; font-family:'Playfair Display', serif; color:var(--accent); font-size:20px;">A small note</div>
     <div class="letter-frame" id="modalLetterText" style="white-space:pre-line;">
-      <!-- >>> YOUR LETTER TEXT HERE >>> -->
+      <!-- >>> REPLACE YOUR LETTER TEXT HERE <<< -->
       Dear Alya,
 
-      (Replace this text with your personal letter. Keep line breaks. This is where you write what you want her to read.)
+      (Replace this text with your personal letter — keep line breaks.)
 
       Love,
       Seif
-      <!-- <<< end editable area -->
+      <!-- <<< end letter area -->
     </div>
   </div>
 </div>
 
 <script>
-/* ---------- Globals ---------- */
+/* ---------- globals ---------- */
 window._heartsInterval = null;
 window._confettiInterval = null;
 
-/* ---------- Start -> Question ---------- */
+/* ---------- start -> question ---------- */
 function openQuestion(){
-  // replace #app content with question card only (no stacking)
   const app = document.getElementById('app');
   app.innerHTML = `
     <div class="card" id="questionCard">
@@ -189,12 +180,12 @@ function openQuestion(){
       </div>
     </div>
   `;
-  // clear any intervals
+  // clear any visuals
   if(window._heartsInterval){ clearInterval(window._heartsInterval); window._heartsInterval = null; }
   if(window._confettiInterval){ clearInterval(window._confettiInterval); window._confettiInterval = null; }
 }
 
-/* ---------- NO button (chaotic messages) ---------- */
+/* ---------- No behavior: tooltip + safe teleport (avoids Yes area) ---------- */
 let _noIndex = 0;
 let _yesScale = 1;
 const messages = [
@@ -208,36 +199,71 @@ const messages = [
 ];
 
 function noClicked(el){
-  if(_noIndex < messages.length){
-    el.textContent = messages[_noIndex];
-    _noIndex++;
-  } else {
-    el.textContent = "Still no? 😭";
-  }
-  // grow Yes
-  _yesScale += 0.32;
+  // show tooltip instead of modifying the button text for less overlap
+  const tip = document.getElementById('noTip');
+  const msg = (_noIndex < messages.length) ? messages[_noIndex] : "Still no? 😭";
+  _noIndex++;
+  tip.textContent = msg;
+  tip.style.opacity = '1';
+  tip.style.display = 'block';
+
+  // compute safe placement for the tooltip and for the button
   const yes = document.getElementById('yesBtn');
-  if(yes){ yes.style.transform = 'scale(' + _yesScale + ')'; yes.style.transition = 'transform .22s ease'; }
-  // teleport No to random spot
+  const yesRect = yes ? yes.getBoundingClientRect() : null;
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+  // choose side away from yes button
+  let leftPerc = 10;
+  if(yesRect){
+    const yesCenter = (yesRect.left + yesRect.right) / 2;
+    if(yesCenter < vw/2){ // yes is on left half -> move no to right
+      leftPerc = 78 - Math.random()*10; // between ~68-78%
+    } else { // yes on right half -> move no to left
+      leftPerc = 6 + Math.random()*12; // ~6-18%
+    }
+  } else {
+    leftPerc = 10 + Math.random()*70;
+  }
+  // vertical position, keep within visible bounds
+  const topPerc = 12 + Math.random() * 60; // 12% -> 72%
+
+  // place the button to chosen area (absolute)
   el.style.position = 'absolute';
-  el.style.left = Math.min(86, 6 + Math.random()*78) + '%';
-  el.style.top  = Math.min(82, 8 + Math.random()*72) + '%';
+  el.style.left = leftPerc + '%';
+  el.style.top = topPerc + '%';
   el.style.zIndex = 9999;
+
+  // place tooltip near the button but offset
+  const tipX = Math.min(window.innerWidth - 20, (leftPerc/100) * window.innerWidth + 20);
+  const tipY = Math.min(window.innerHeight - 20, (topPerc/100) * window.innerHeight - 30);
+  tip.style.left = tipX + 'px';
+  tip.style.top  = tipY + 'px';
+
+  // fade out the tip after short time
+  clearTimeout(tip._timeout);
+  tip._timeout = setTimeout(()=> {
+    tip.style.opacity = '0';
+    setTimeout(()=> tip.style.display='none', 220);
+  }, 1100);
+
+  // grow Yes button for fun
+  _yesScale += 0.32;
+  if(yes){ yes.style.transform = 'scale(' + _yesScale + ')'; yes.style.transition = 'transform .22s ease'; }
 }
 
-/* ---------- Show final (Yes) - finalCard is the only scrollable area ---------- */
+/* ---------- show final: this card will be the only scrollable area ---------- */
 function showFinal(){
   const app = document.getElementById('app');
-
-  // REPLACE app with a single finalWrapper (fills viewport minus padding)
   app.innerHTML = `
     <div class="finalCardWrap">
       <div class="finalCard" id="finalCard">
-        <div id="finalText">
-          <div style="font-size:1rem; margin-bottom:8px; color:#ff2e88; font-family:'Poppins',sans-serif;">Love youu💞</div>
-          <div style="font-family:'Playfair Display', serif; color:#fff; text-shadow:0 6px 18px rgba(0,0,0,0.18);">
-            You had no choice anw 😌💕<br><br>Guess we have plans now 😁
+        <div id="finalTop">
+          <div class="loveSmall">Love youu💞</div>
+          <div id="finalText">
+            You had no choice 😌💕<br><br>Guess we have plans now 😁
           </div>
+          <div id="scrollHint">⬇️ Scroll down</div>
         </div>
 
         <img id="finalPhoto" src="finalphoto.jpg.jpg" alt="Us">
@@ -248,14 +274,22 @@ function showFinal(){
           <div id="letterClosed" onclick="openModal()">📜 Open letter</div>
 
           <div id="bouquetWrap">
-            <img id="bouquetImg" src="bouquet.jpg" alt="bouquet" onerror="this.style.display='none'">
-            <div id="emojiBouquet">
-              <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
-              <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
-              <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+            <!-- built-in bouquet "paper" that always renders -->
+            <div class="bouquetPaper" id="bouquetPaper">
+              <div style="font-size:14px;color:#a33;margin-bottom:6px;">A little surprise</div>
+              <!-- emoji bouquet (styled to look like an arranged bouquet) -->
+              <div class="bouquetRow" id="emojiBouquet">
+                <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+                <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+                <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+              </div>
+
+              <!-- if you upload a real image named bouquet.jpg it will show instead -->
+              <img id="bouquetImg" src="bouquet.jpg" alt="bouquet image">
             </div>
           </div>
 
+          <!-- inline letter area (only shown after modal closed) -->
           <div id="letterBox"></div>
         </div>
 
@@ -263,28 +297,48 @@ function showFinal(){
     </div>
   `;
 
-  // start continuous celebration visuals
+  // celebration
   startHeartsContinuous();
   startConfettiContinuous();
 
-  // attempt to show bouquet image or emoji bouquet animation
+  // show bouquet: prefer uploaded image if present; otherwise show emoji bouquet
   setTimeout(()=> {
     const img = document.getElementById('bouquetImg');
     const emoji = document.getElementById('emojiBouquet');
-    if(img && img.complete && img.naturalWidth !== 0 && img.style.display !== 'none'){
-      // bouquet image exists and is shown - animate it slightly
-      img.style.opacity='0'; img.style.transform='scale(.98)';
-      setTimeout(()=> { img.style.transition='opacity .5s, transform .4s'; img.style.opacity='1'; img.style.transform='scale(1)'; }, 80);
-    } else if(emoji){
-      // animate emoji bouquet
-      emoji.classList.add('bouquetVisible');
-      Array.from(emoji.children).forEach((r,i)=>{
-        r.style.transitionDelay = (i*70) + 'ms';
-        r.style.transform = 'translateY(0) scale(1)';
-        r.style.opacity = '1';
-      });
+    const paper = document.getElementById('bouquetPaper');
+    // if image loaded and valid, show it; else show emoji bouquet
+    if(img && img.complete && img.naturalWidth !== 0){
+      img.style.display = 'block';
+      img.style.opacity = '0';
+      img.style.transform = 'scale(.98)';
+      setTimeout(()=> { img.style.transition='opacity .45s, transform .4s'; img.style.opacity='1'; img.style.transform='scale(1)'; }, 80);
+      if(emoji) emoji.style.display = 'none';
+    } else {
+      if(emoji){
+        emoji.classList.add('bouquetVisible');
+        Array.from(emoji.children).forEach((r,i)=>{
+          r.style.transitionDelay = (i*70) + 'ms';
+          r.style.transform = 'translateY(0) scale(1)';
+          r.style.opacity = '1';
+        });
+      }
     }
-  }, 300);
+  }, 280);
+
+  // add scroll listener to fade finalText as user scrolls down
+  const finalCard = document.getElementById('finalCard');
+  const finalText = document.getElementById('finalText');
+  const scrollHint = document.getElementById('scrollHint');
+  if(finalCard && finalText){
+    finalCard.addEventListener('scroll', ()=> {
+      const st = finalCard.scrollTop;
+      // fade out header text as user scrolls down; range 0->120 px
+      const fade = Math.max(0, 1 - st/160);
+      finalText.style.opacity = fade;
+      // hide hint after small scroll
+      if(st > 30) scrollHint.style.opacity = '0'; else scrollHint.style.opacity = '1';
+    });
+  }
 }
 
 /* ---------- hearts & confetti ---------- */
@@ -301,7 +355,6 @@ function startHeartsContinuous(){
     setTimeout(()=> heart.remove(), 8000);
   }, 420);
 }
-
 function startConfettiContinuous(){
   if(window._confettiInterval) clearInterval(window._confettiInterval);
   const colors = ['#ff2e88','#ffffff','#ffb6d9','#ff66b3','#ffd6eb','#ff4d9e'];
@@ -315,25 +368,17 @@ function startConfettiContinuous(){
     piece.style.animationDuration = (2800 + Math.random()*2200) + 'ms';
     document.body.appendChild(piece);
     setTimeout(()=> piece.remove(), 7000);
-  }, 140);
+  }, 160);
 }
 
-/* ---------- modal open/close & letter reveal ---------- */
+/* ---------- modal open/close behavior ---------- */
+/* Now: openModal shows modal only. When modal is closed we inject the letter text inline (no duplicate while modal open). */
 function openModal(){
   const modal = document.getElementById('letterModal');
   modal.style.display = 'flex';
   const card = document.getElementById('letterCard');
   setTimeout(()=> card.classList.add('show'), 20);
-
-  // copy modal text into inline letter box so it's visible under card too
-  const modalText = document.getElementById('modalLetterText');
-  const letterBox = document.getElementById('letterBox');
-  if(letterBox && modalText){
-    letterBox.innerHTML = '<div class="letter-frame">' + modalText.innerHTML + '</div>';
-    letterBox.style.display = 'block';
-  }
-
-  // ensure bouquet emoji visible (bloom)
+  // ensure bouquet blooms (if emoji)
   const emoji = document.getElementById('emojiBouquet');
   if(emoji){
     emoji.classList.add('bouquetVisible');
@@ -343,24 +388,34 @@ function openModal(){
       r.style.opacity = '1';
     });
   }
-
-  // scroll modal into view (it covers screen) & also scroll finalCard to letter position
+  // scroll finalCard down a little so modal appears centered if needed
   setTimeout(()=> {
     const finalCard = document.querySelector('.finalCard');
-    if(finalCard){
-      finalCard.scrollTo({ top: finalCard.scrollHeight, behavior: 'smooth' });
-    }
-  }, 220);
+    if(finalCard) finalCard.scrollTo({ top: finalCard.scrollHeight/3, behavior: 'smooth' });
+  }, 200);
 }
 
 function closeModal(){
   const modal = document.getElementById('letterModal');
   const card = document.getElementById('letterCard');
   if(card) card.classList.remove('show');
-  setTimeout(()=> { if(modal) modal.style.display='none'; }, 220);
+  setTimeout(()=> {
+    if(modal) modal.style.display='none';
+    // copy letter content into inline letterBox now that modal is closed (avoids duplicate while modal open)
+    const modalText = document.getElementById('modalLetterText');
+    const letterBox = document.getElementById('letterBox');
+    if(letterBox && modalText){
+      letterBox.innerHTML = '<div class="letter-frame">' + modalText.innerHTML + '</div>';
+      // make sure final card scroll shows the letter (so user sees it after closing)
+      const finalCard = document.querySelector('.finalCard');
+      if(finalCard){
+        setTimeout(()=> finalCard.scrollTo({ top: finalCard.scrollHeight - finalCard.clientHeight, behavior: 'smooth' }), 120);
+      }
+    }
+  }, 220);
 }
 
-/* cleanup on unload */
+/* cleanup before unload */
 window.addEventListener('beforeunload', ()=>{
   if(window._heartsInterval) clearInterval(window._heartsInterval);
   if(window._confettiInterval) clearInterval(window._confettiInterval);
