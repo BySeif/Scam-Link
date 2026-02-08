@@ -41,7 +41,13 @@ h1{
   text-shadow:0 6px 20px rgba(0,0,0,0.25);
   margin-bottom:20px;
 }
-
+.love-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(26px,5vw,38px);
+  color:#ff2e88;
+  margin-bottom:10px;
+  text-shadow:0 6px 20px rgba(255,46,136,0.4);
+}
 button{
   border:none;
   padding:14px 36px;
@@ -181,16 +187,16 @@ function setupButtons(){
   });
 
   yesBtn.addEventListener("click",function(){
-    document.getElementById("container").innerHTML=`
-      <div class="card">
-        <h1>You had no choice 😌💕<br><br>Guess we have plans now 😁</h1>
-        <img id="finalPhoto" src="finalphoto.jpg.jpg">
-      </div>
-    `;
-    startHearts();
-    startConfetti();
-  });
-}
+  document.getElementById("container").innerHTML=`
+    <div class="card">
+      <div class="love-text">Love you💕</div>
+      <h1>You had no choice 😌💕<br><br>Guess we have plans now 😁</h1>
+      <img id="finalPhoto" src="finalphoto.jpg.jpg">
+    </div>
+  `;
+  startHearts();
+  startConfetti();
+});
 
 function startHearts(){
   setInterval(()=>{
