@@ -1,216 +1,605 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You 💗</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>For Alya 💗💌</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{
-margin:0;
-font-family:'Georgia',serif;
-background:linear-gradient(135deg,#ffd6e7,#ffc2dd);
-text-align:center;
-color:#fff;
-overflow-x:hidden;
+/* ========== THEME COLORS ========== */
+:root{
+  --pink1: #ffd6eb;
+  --pink2: #ffb6d9;
+  --accent: #ff2e88;
+  --btn1: #ff4d9e;
+  --paper: #fff7fb;
+  --text-dark: #222;
 }
 
-.card{
-background:rgba(255,255,255,0.2);
-margin:30px auto;
-padding:25px;
-width:90%;
-max-width:420px;
-border-radius:30px;
-box-shadow:0 20px 40px rgba(0,0,0,0.15);
+/* Reset / Layout */
+html,body{height:100%;margin:0;padding:0;background:linear-gradient(160deg,var(--pink1),var(--pink2));-webkit-font-smoothing:antialiased;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text-dark);}
+body{display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden;} /* page fixed; we show one view at a time */
+
+/* App wrapper */
+#app { width:100%; max-width:820px; box-sizing:border-box; }
+
+/* Glass card (used for start / question) */
+.card {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(14px);
+  padding: 24px;
+  border-radius: 22px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.14);
+  margin: 10px auto;
+  text-align:center;
 }
 
-img{
-width:100%;
-border-radius:25px;
+/* Envelope / start */
+#envelope {
+  width:260px;
+  max-width:86%;
+  border-radius:14px;
+  cursor:pointer;
+  transition: transform .28s ease;
+  filter: drop-shadow(0 12px 26px rgba(0,0,0,0.18));
+}
+#envelope:hover { transform: translateY(-6px) rotate(-2deg) scale(1.02); }
+
+.headerTitle { font-family:"Playfair Display",serif; color:var(--accent); font-size: clamp(22px,5vw,40px); margin:10px 0; }
+
+/* Open button */
+.openBtn {
+  display:inline-block;
+  background: linear-gradient(90deg,var(--btn1),#ff6fb0);
+  color: #fff;
+  border: none;
+  padding: 12px 34px;
+  border-radius: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(255,77,158,0.22);
+}
+.pulse { animation: pulse 1.6s infinite; }
+@keyframes pulse { 0%{transform:scale(1);}50%{transform:scale(1.06);}100%{transform:scale(1);} }
+
+/* Main question image */
+#mainPhoto {
+  width: 100%;
+  max-height: 54vh;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+  display:block;
+  margin: 14px auto;
 }
 
-button{
-border:none;
-padding:14px 30px;
-border-radius:40px;
-font-size:18px;
-cursor:pointer;
-transition:.3s;
+/* Title under image */
+.questionTitle { font-family:"Playfair Display", serif; color:#fff; text-shadow:0 6px 18px rgba(0,0,0,0.16); font-size: clamp(20px,5vw,36px); margin-top:8px; }
+
+/* Button row */
+.btnRow { display:flex; gap:14px; justify-content:center; align-items:center; margin-top:14px; position:relative; }
+.yesBtn, .noBtn { border:none; padding:12px 28px; border-radius:34px; font-size:18px; cursor:pointer; }
+.yesBtn { background: linear-gradient(90deg,#ff476e,#ff2e88); color:white; box-shadow:0 10px 22px rgba(255,46,136,.22); transform-origin:center; transition: transform .18s ease; }
+.noBtn  { background: #555; color:white; box-shadow:0 6px 14px rgba(0,0,0,0.12); position:relative; }
+
+/* Floating message tooltip (No messages) */
+.noTip {
+  position: fixed;
+  background: rgba(60,60,60,0.95);
+  color: white;
+  padding:10px 14px;
+  border-radius:22px;
+  box-shadow:0 12px 28px rgba(0,0,0,0.28);
+  transform: translate(-50%, -50%);
+  z-index: 99999;
+  pointer-events: none;
+  opacity:0;
+  transition: opacity .18s ease, transform .18s ease;
+  white-space:nowrap;
+  font-size:15px;
 }
 
-#yesBtn{
-background:linear-gradient(45deg,#ff2e88,#ff5fa2);
-color:white;
+/* FINAL SCREEN - separate view wrapper (scrollable internally) */
+.fullView { width:100%; display:flex; justify-content:center; }
+.finalCard {
+  width:100%;
+  max-width:760px;
+  border-radius:22px;
+  padding:26px;
+  box-sizing:border-box;
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 22px 56px rgba(0,0,0,0.16);
+  overflow:auto;
+  max-height: calc(100vh - 40px); /* internal scroll only for final card */
+  -webkit-overflow-scrolling: touch;
 }
 
-#noBtn{
-background:#444;
-color:white;
-margin-left:10px;
-position:relative;
+/* Final headings */
+.finalSmall { color: #ff2e88; font-family: "Poppins",sans-serif; margin-bottom:6px; font-size:15px; }
+.finalHeadline { font-family:"Playfair Display", serif; color:white; text-shadow:0 8px 26px rgba(255,46,136,0.12); font-size: clamp(22px,5.2vw,38px); line-height:1.06; margin-bottom:8px; }
+
+/* Scroll hint under the final text (shows first) */
+.scrollHint { color: rgba(255,255,255,0.95); margin-top:8px; font-size:16px; }
+
+/* final photo */
+#finalPhoto {
+  width:100%;
+  max-height:56vh;
+  object-fit:cover;
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.22);
+  margin-top:14px;
 }
 
-#finalSection{
-display:none;
-}
+/* "A little surprise" button that navigates to the bouquet page */
+.surpriseBtn { margin-top:18px; background: linear-gradient(90deg,#fff,#fff0f8); color:var(--accent); padding:12px 18px; border-radius:14px; box-shadow:0 10px 24px rgba(0,0,0,0.12); cursor:pointer; }
 
-#surpriseBtn{
-margin-top:30px;
-background:white;
-color:#ff2e88;
-font-weight:bold;
-}
+/* BOUQUET PAGE (separate view; not same scroll as final) */
+.bouquetPage { width:100%; max-width:760px; margin:0 auto; text-align:center; }
+.bouquetPaper { width:94%; max-width:640px; margin: 14px auto; background: linear-gradient(180deg,#fff7fb,#fff0f6); border-radius:20px; padding:18px; box-shadow:0 18px 40px rgba(0,0,0,0.12); }
+.bouquetRow { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+.rose { font-size:28px; opacity:0; transform: translateY(14px) scale(.95); transition: transform .55s cubic-bezier(.2,.9,.2,1), opacity .55s; }
+.bouquetPaper.bloom .rose { opacity:1; transform: translateY(0) scale(1); }
 
-#bouquetPage{
-display:none;
-padding:30px;
-}
+/* optional real bouquet image */
+#bouquetImg { width:90%; max-width:420px; border-radius:14px; display:none; margin-top:10px; box-shadow:0 12px 30px rgba(0,0,0,0.12); cursor:pointer; }
 
-#bouquetImg{
-max-width:300px;
-border-radius:20px;
-box-shadow:0 20px 50px rgba(255,0,120,0.3);
-margin-top:20px;
-cursor:pointer;
-}
+/* framed letter area (inline after modal closed) */
+.letterFrame { margin-top:14px; background: linear-gradient(180deg,#fffdfc,#fff7fb); border-radius:12px; padding:16px; border: 2px dashed rgba(255,46,136,0.12); text-align:left; white-space:pre-line; color:#222; }
 
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
-justify-content:center;
-align-items:center;
+/* modal letter popup - centered overlay */
+.modalOverlay {
+  position:fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(0,0,0,0.32); z-index:99999;
 }
+.modalCard { width:min(92vw,680px); border-radius:14px; background:#fff; padding:20px; box-shadow:0 30px 80px rgba(0,0,0,0.35); color:#222; position:relative; }
+.modalClose { position:absolute; right:12px; top:10px; border:none; background:transparent; font-size:22px; cursor:pointer; }
 
-.modalContent{
-background:white;
-padding:30px;
-width:80%;
-max-width:350px;
-border-radius:20px;
-color:#333;
-text-align:left;
-box-shadow:0 20px 50px rgba(0,0,0,0.3);
-}
+/* hearts + confetti pieces (floating) */
+.floatingHeart { position:fixed; bottom:-20px; font-size:22px; pointer-events:none; animation:floatUp linear forwards; z-index:9998; }
+@keyframes floatUp { to{ transform: translateY(-120vh) rotate(160deg); opacity:0; } }
+.confettiPiece { position:fixed; top:-20px; width:8px; height:12px; animation:fall linear forwards; pointer-events:none; z-index:9997; }
+@keyframes fall { to{ transform: translateY(120vh) rotate(360deg); } }
 
-.close{
-float:right;
-cursor:pointer;
-font-weight:bold;
-}
-
-.confetti{
-position:fixed;
-width:10px;
-height:10px;
-background:#ff2e88;
-animation:fall 3s linear infinite;
-}
-
-@keyframes fall{
-0%{top:-10px;}
-100%{top:100vh;}
+/* small screen tweaks */
+@media(min-width:900px){
+  #mainPhoto{ max-width:520px; }
+  #finalPhoto{ max-width:640px; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="card" id="mainCard">
-<img src="mainphoto.jpg">
-
-<h2>Will you be my Valentine? 💖</h2>
-
-<button id="yesBtn">Yes 💕</button>
-<button id="noBtn">No 😢</button>
+<div id="app">
+  <!-- ========== START SCREEN (ENVELOPE) ========== -->
+  <div class="card" id="startScreen">
+    <img id="envelopeImg" src="envelope.png.jpg" alt="Envelope - For Alya💗💌" />
+    <div class="headerTitle">For Alya💗💌</div>
+    <button class="openBtn pulse" id="openBtn">Open</button>
+  </div>
 </div>
 
-<div class="card" id="finalSection">
-<h2>Love youu💞</h2>
-<h2>You had no choice anw 😌💕</h2>
-<h2>Guess we have plans now 😁</h2>
+<!-- floating tooltip for No messages (reused) -->
+<div id="noTip" class="noTip" aria-hidden="true"></div>
 
-<img src="mainphoto.jpg">
+<!-- MODAL LETTER -->
+<div id="letterModal" class="modalOverlay" aria-hidden="true">
+  <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modalClose" id="modalCloseBtn">✕</button>
+    <h3 id="modalTitle" style="font-family:'Playfair Display',serif;color:var(--accent);text-align:center;margin-top:0;">A small note</h3>
+    <div id="modalLetterContent" style="white-space:pre-line; color:#222; line-height:1.45;">
+      <!-- >>> YOUR LETTER TEXT HERE >>> 
+           Replace the content below with your own letter. Keep the spacing / line breaks.
+      -->
+Dear Alya,
 
-<button id="surpriseBtn">✨ A little surprise</button>
-</div>
+(Replace this text with your personal letter. Keep line breaks. This is the place to write your message.)
 
-<div id="bouquetPage">
-<h2>Here's your flowers (sorry they not real😔)</h2>
-
-<img id="bouquetImg" src="https://i.pinimg.com/originals/e8/23/95/e8239556cc81ddf40be81a82220eb11e.jpg">
-
-</div>
-
-<div class="modal" id="letterModal">
-<div class="modalContent">
-<span class="close" onclick="closeLetter()">X</span>
-<h3>A small note</h3>
-<p>
-Dear Alya,<br><br>
-
-Replace this text with your personal letter.<br>
-Write whatever you want here.<br><br>
-
-Love,<br>
+Love,
 Seif
-</p>
-</div>
+      <!-- <<< end editable area -->
+    </div>
+  </div>
 </div>
 
 <script>
-let noTexts=[
-"Pleasee😊",
-"With a cherry❤️",
-"You dont love me",
-"Still no? 😭"
+/* ========= Global state & helpers ========= */
+const startScreen = document.getElementById('startScreen');
+const app = document.getElementById('app');
+const noTip = document.getElementById('noTip');
+const letterModal = document.getElementById('letterModal');
+const modalCloseBtn = document.getElementById('modalCloseBtn');
+const modalLetterContent = document.getElementById('modalLetterContent');
+
+/* images filenames expected in repo root (case-sensitive):
+   envelope.png.jpg
+   mainphoto.jpg
+   finalphoto.jpg.jpg
+   optional: bouquet.jpg
+*/
+
+/* ---------- utility: force show only one "view" (we replace app.innerHTML) ---------- */
+function showView(html){
+  app.innerHTML = html;
+  // after replacing content, run any post-init functions for that view
+  if(typeof postInit === 'function') postInit();
+}
+
+/* ---------- START screen init ---------- */
+document.getElementById('openBtn').addEventListener('click', ()=> {
+  openQuestionView();
+});
+
+/* ---------- NO messages sequence (user requested a longer list, no name in messages) ---------- */
+const NO_MESSAGES = [
+  "Are you sure? 🥺",
+  "Really sure??",
+  "Think again...",
+  "Pleasee😊",
+  "With a cherry❤️",
+  "That's mean",
+  "You dont love me",
+  "Still no? 😭"
 ];
 
-let noIndex=0;
+/* ---------- We'll add intervals for hearts/confetti (keeps running) ---------- */
+let heartsInterval = null;
+let confettiInterval = null;
 
-document.getElementById("noBtn").onclick=function(){
-this.innerText=noTexts[noIndex];
-noIndex++;
-if(noIndex>=noTexts.length){
-noIndex=0;
+/* helper to start continuous hearts */
+function startHearts(){
+  if(heartsInterval) return;
+  heartsInterval = setInterval(()=>{
+    const h = document.createElement('div');
+    h.className = 'floatingHeart';
+    h.innerText = '💖';
+    h.style.left = (Math.random()*90) + 'vw';
+    h.style.fontSize = (14 + Math.random()*18) + 'px';
+    h.style.animationDuration = (3000 + Math.random()*2400) + 'ms';
+    document.body.appendChild(h);
+    setTimeout(()=> h.remove(), 9000);
+  }, 420);
 }
-};
-
-document.getElementById("yesBtn").onclick=function(){
-document.getElementById("mainCard").style.display="none";
-document.getElementById("finalSection").style.display="block";
-createConfetti();
-};
-
-document.getElementById("surpriseBtn").onclick=function(){
-document.getElementById("finalSection").style.display="none";
-document.getElementById("bouquetPage").style.display="block";
-};
-
-document.getElementById("bouquetImg").onclick=function(){
-document.getElementById("letterModal").style.display="flex";
-};
-
-function closeLetter(){
-document.getElementById("letterModal").style.display="none";
+function stopHearts(){
+  if(heartsInterval){ clearInterval(heartsInterval); heartsInterval = null; }
 }
 
-function createConfetti(){
-for(let i=0;i<50;i++){
-let c=document.createElement("div");
-c.className="confetti";
-c.style.left=Math.random()*100+"vw";
-c.style.background=["#ff2e88","#ff5fa2","#fff"][Math.floor(Math.random()*3)];
-c.style.animationDuration=(Math.random()*2+2)+"s";
-document.body.appendChild(c);
+/* helper to start continuous confetti */
+function startConfetti(){
+  if(confettiInterval) return;
+  const colors = ['#ff2e88','#ffffff','#ffb6d9','#ff66b3','#ffd6eb','#ff4d9e'];
+  confettiInterval = setInterval(()=>{
+    const p = document.createElement('div');
+    p.className = 'confettiPiece';
+    p.style.left = (Math.random()*100) + 'vw';
+    p.style.width = (6 + Math.random()*8) + 'px';
+    p.style.height = (8 + Math.random()*14) + 'px';
+    p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration = (2600 + Math.random()*2400) + 'ms';
+    document.body.appendChild(p);
+    setTimeout(()=> p.remove(), 7000);
+  }, 160);
 }
+function stopConfetti(){
+  if(confettiInterval){ clearInterval(confettiInterval); confettiInterval = null; }
 }
+
+/* ========= QUESTION VIEW (Open -> Question) ========= */
+function openQuestionView(){
+  const html = `
+    <div class="card" id="questionCard">
+      <img id="mainPhoto" src="mainphoto.jpg" alt="Alya photo">
+      <div class="questionTitle">Will you be my Valentine? 💖</div>
+      <div class="btnRow">
+        <button class="yesBtn" id="yesBtn">Yes 💕</button>
+        <button class="noBtn" id="noBtn">No 😢</button>
+      </div>
+    </div>
+  `;
+  showView(html);
+}
+
+/* postInit will run after showView if defined */
+function postInit(){
+  // if questionCard loaded, wire its buttons
+  const q = document.getElementById('questionCard');
+  if(q){
+    const yes = document.getElementById('yesBtn');
+    const no  = document.getElementById('noBtn');
+    // Yes click -> final view
+    yes.addEventListener('click', ()=> {
+      // small pop effect
+      yes.style.transform = 'scale(1.04)';
+      setTimeout(()=> yes.style.transform = '', 160);
+      openFinalView();
+    });
+
+    // No click -> show messages and teleport button away (safe side), grow yes
+    no.addEventListener('click', (ev)=> {
+      handleNoClick(ev.currentTarget);
+    });
+  }
+}
+
+/* handle No logic: tooltip + teleport + grow Yes */
+let noIndex = 0;
+let yesScale = 1;
+function handleNoClick(noBtnEl){
+  // message from list
+  const msg = NO_MESSAGES[Math.min(noIndex, NO_MESSAGES.length-1)];
+  noIndex++;
+  // show tooltip near button but away from Yes area
+  // compute safe placement: find Yes button center to choose opposite side
+  const yes = document.getElementById('yesBtn');
+  let yesCenterX = window.innerWidth/2;
+  if(yes){
+    const r = yes.getBoundingClientRect();
+    yesCenterX = (r.left + r.right)/2;
+  }
+  // choose left or right side opposite to yes center
+  let leftPerc;
+  if(yesCenterX < window.innerWidth/2){
+    leftPerc = 78 - Math.random()*10; // move No to right area (68-78%)
+  } else {
+    leftPerc = 6 + Math.random()*12;  // move No to left area (6-18%)
+  }
+  const topPerc = 20 + Math.random()*60; // 20% -> 80%
+
+  // absolutely position the button to that area
+  noBtnEl.style.position = 'absolute';
+  noBtnEl.style.left = leftPerc + '%';
+  noBtnEl.style.top = topPerc + '%';
+  noBtnEl.style.zIndex = 9999;
+
+  // show tooltip bubble near the button (slightly above-left)
+  noTip.textContent = msg;
+  noTip.style.left = (leftPerc/100 * window.innerWidth) + 'px';
+  noTip.style.top  = Math.max(36, (topPerc/100 * window.innerHeight) - 36) + 'px';
+  noTip.style.opacity = '1';
+  noTip.style.transform = 'translate(-50%,-50%) scale(1)';
+  noTip.style.display = 'block';
+
+  // hide after short time
+  clearTimeout(noTip._timeout);
+  noTip._timeout = setTimeout(()=> {
+    noTip.style.opacity = '0';
+    setTimeout(()=> noTip.style.display='none', 200);
+  }, 1200);
+
+  // grow Yes
+  yesScale += 0.28;
+  if(yes){
+    yes.style.transform = 'scale(' + yesScale + ')';
+    yes.style.transition = 'transform .18s ease';
+  }
+}
+
+/* ========= FINAL VIEW (Yes -> final) ========= */
+function openFinalView(){
+  // build final view HTML (this is the only scrollable final card)
+  const html = `
+    <div class="fullView">
+      <div class="finalCard" id="finalCard">
+        <div id="finalTop" style="text-align:center;">
+          <div class="finalSmall">Love youu💞</div>
+          <div class="finalHeadline" id="headlineMain">You had no choice anw 😌💕<br><br>Guess we have plans now 😁</div>
+          <div class="scrollHint">⬇️ Scroll for a little surprise</div>
+        </div>
+
+        <img id="finalPhoto" src="finalphoto.jpg.jpg" alt="Final photo">
+
+        <div style="text-align:center; margin-top:14px;">
+          <button class="surpriseBtn" id="surpriseBtn">✨ A little surprise</button>
+        </div>
+
+      </div>
+    </div>
+  `;
+  showView(html);
+
+  // start hearts & confetti (continuous)
+  startHearts();
+  startConfetti();
+}
+
+/* after final view rendered, bind surprise button */
+function postInitFinal(){
+  const surprise = document.getElementById('surpriseBtn');
+  if(surprise) surprise.addEventListener('click', ()=>{
+    openBouquetPage();
+  });
+
+  // make the finalCard respond to scroll: fade headline as user scrolls
+  const finalCard = document.getElementById('finalCard');
+  const headline = document.getElementById('headlineMain');
+  const hint = document.querySelector('.scrollHint');
+  if(finalCard && headline){
+    finalCard.addEventListener('scroll', ()=> {
+      const s = finalCard.scrollTop;
+      const fade = Math.max(0, 1 - s/160);
+      headline.style.opacity = fade;
+      if(hint) hint.style.opacity = (s>20? '0':'1');
+    });
+  }
+}
+
+/* attach postInit hook after showView if we're on final */
+function postInit(){
+  // If questionCard exists, wire its controls (see earlier)
+  const q = document.getElementById('questionCard');
+  if(q){
+    const yes = document.getElementById('yesBtn');
+    const no  = document.getElementById('noBtn');
+    yes.addEventListener('click', ()=> {
+      yes.style.transform = 'scale(1.04)';
+      setTimeout(()=> yes.style.transform = '', 160);
+      openFinalView();
+    });
+    no.addEventListener('click', (ev)=> handleNoClick(ev.currentTarget));
+    return;
+  }
+
+  // If final view was loaded, hunt for final-specific init
+  if(document.getElementById('finalCard')){
+    postInitFinal();
+    return;
+  }
+
+  // If bouquet page loaded, do bouquet init (defined below)
+  if(document.getElementById('bouquetPaper')){
+    postInitBouquet();
+    return;
+  }
+}
+
+/* ========= BOUQUET PAGE (separate view) ========= */
+function openBouquetPage(){
+  const html = `
+    <div class="bouquetPage" id="bouquetPageWrap">
+      <div style="height:12px;"></div>
+      <div class="bouquetPaper" id="bouquetPaper">
+        <div style="font-family:'Playfair Display',serif; color:var(--accent); font-size:20px; margin-bottom:8px;">Here’s your flowers (sorry they not real😔)</div>
+
+        <!-- optional real bouquet image: will be shown if bouquet.jpg exists in repo root -->
+        <img id="bouquetImg" src="bouquet.jpg" alt="bouquet photo" />
+
+        <!-- fallback emoji bouquet (will animate if present) -->
+        <div class="bouquetRow" id="emojiBouquet">
+          <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+          <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+          <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <button class="surpriseBtn" id="openLetterBtn">📜 Open letter</button>
+        </div>
+
+        <div id="letterInlineSpace"></div>
+      </div>
+    </div>
+  `;
+  showView(html);
+}
+
+/* after bouquet page loaded: show bouquet image OR animate emoji bouquet; wire open letter */
+function postInitBouquet(){
+  const img = document.getElementById('bouquetImg');
+  const emoji = document.getElementById('emojiBouquet');
+  const paper = document.getElementById('bouquetPaper');
+
+  // If bouquet.jpg exists (loaded), display it and hide emoji
+  if(img){
+    img.addEventListener('load', ()=> {
+      if(img.naturalWidth > 20){
+        img.style.display = 'block';
+        if(emoji) emoji.style.display = 'none';
+      } else {
+        img.style.display = 'none';
+      }
+    });
+    // also attempt on errors to fallback
+    img.addEventListener('error', ()=> {
+      img.style.display = 'none';
+      if(emoji) emoji.style.display = 'flex';
+    });
+    // if the browser already cached it, trigger the load handler manually:
+    setTimeout(()=> {
+      if(img.complete && img.naturalWidth > 20){
+        img.style.display = 'block';
+        if(emoji) emoji.style.display = 'none';
+      } else {
+        // animate emoji bouquet
+        if(emoji){
+          emoji.classList.add('bloom');
+          Array.from(emoji.children).forEach((r,i)=>{
+            r.style.transitionDelay = (i*70) + 'ms';
+            r.style.opacity = '1';
+            r.style.transform = 'translateY(0) scale(1)';
+          });
+        }
+      }
+    }, 120);
+  }
+
+  // wire open letter button to show modal
+  const openLetterBtn = document.getElementById('openLetterBtn');
+  if(openLetterBtn) openLetterBtn.addEventListener('click', ()=> {
+    openLetterModal();
+  });
+
+  // clicking the bouquet image (if present) also opens letter
+  if(img) img.addEventListener('click', ()=> openLetterModal());
+}
+
+/* ========= LETTER MODAL (open / close) ========= */
+function openLetterModal(){
+  // show modal
+  letterModal.style.display = 'flex';
+  setTimeout(()=> {
+    const card = letterModal.querySelector('.modalCard');
+    if(card) card.style.transform = 'scale(1)';
+  }, 30);
+}
+function closeLetterModal(){
+  // hide and then inject inline letter under bouquet
+  letterModal.style.display = 'none';
+
+  // copy modal content into inline letter box so it's visible after modal closed
+  const inline = document.getElementById('letterInlineSpace');
+  if(inline){
+    inline.innerHTML = '<div class="letterFrame">' + modalLetterContent.innerHTML + '</div>';
+  }
+
+  // scroll final / bouquet page to bottom if possible (so letter shows)
+  setTimeout(()=> {
+    const fc = document.querySelector('.finalCard');
+    const bw = document.querySelector('.bouquetPage');
+    if(bw){
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // ensure page top on mobile
+    } else if(fc){
+      fc.scrollTo({ top: fc.scrollHeight, behavior: 'smooth' });
+    }
+  }, 120);
+}
+modalCloseBtn.addEventListener('click', closeLetterModal);
+
+// clicking outside modal content should close (modal overlay)
+letterModal.addEventListener('click', (e)=> {
+  if(e.target === letterModal) closeLetterModal();
+});
+
+/* ========= Post-load hook: we need to call postInit after initial 'openQuestion' call may replace app content.
+   We handle by monkey-patching showView earlier to call postInit (already done).
+*/
+
+/* ========= override showView to call postInit automatically ========= */
+/* (we already defined showView earlier that calls postInit) */
+
+/* ========= Ensure startScreen open is wired (we added openBtn earlier) ========= */
+/* Also attach keyboard simulation, not needed */
+
+/* ========= Finally, small convenience: if user refreshes on final or bouquet view, app will still initialize correctly because each view rewrites app content. ========== */
+
+/* Attach default event handlers for startScreen open (for first page load) */
+document.getElementById('openBtn').addEventListener('click', openQuestionView);
+
+/* small protection: if someone presses No/Yes rapidly on old DOM, reset indexes */
+window.addEventListener('beforeunload', ()=> {
+  // clear intervals
+  if(heartsInterval) clearInterval(heartsInterval);
+  if(confettiInterval) clearInterval(confettiInterval);
+});
+
+/* ========= Extra: auto-run postInit once on initial load if question view already active (not needed) ========= */
 </script>
+
+<!-- After this script the UI will be controlled by JS view functions.
+     How to edit the letter: find the modal letter text area (near top of file) between the comment markers:
+     <!-- >>> YOUR LETTER TEXT HERE >>> -->
+     Replace the sample text with your own letter. Keep line breaks. -->
 
 </body>
 </html>
