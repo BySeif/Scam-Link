@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>For Alya 💗💌</title>
 
-<!-- fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -25,10 +24,10 @@ body{
   justify-content:center;
   padding:18px;
   color:#222;
-  overflow-y:auto; /* allow scrolling for the letter/bouquet section */
+  overflow:hidden; /* IMPORTANT: outer page doesn't scroll; final card scrolls internally */
 }
 
-/* center card */
+/* main center container (keeps start/question/final inside) */
 .container{
   width:100%;
   max-width:720px;
@@ -37,7 +36,7 @@ body{
   box-sizing:border-box;
 }
 
-/* glass card style */
+/* glass card */
 .card{
   background:rgba(255,255,255,0.12);
   backdrop-filter: blur(14px);
@@ -47,7 +46,7 @@ body{
   margin:12px 0;
 }
 
-/* start screen */
+/* envelope/start */
 #envelope{
   width:220px;
   max-width:82vw;
@@ -65,7 +64,7 @@ body{
   font-size:clamp(26px,4.6vw,44px);
 }
 
-/* buttons */
+/* open button */
 .openBtn{
   background:linear-gradient(90deg,var(--btn1),#ff6fb0);
   color:white;
@@ -79,17 +78,17 @@ body{
 .pulse{ animation:pulse 1.6s infinite; }
 @keyframes pulse{ 0%{transform:scale(1);}50%{transform:scale(1.07);}100%{transform:scale(1);} }
 
-/* question screen */
+/* question main image */
 #mainPhoto{
   width:100%;
-  max-height:55vh;      /* <-- controlled size for phone */
+  max-height:55vh;      /* controlled size for phone */
   object-fit:cover;
   border-radius:22px;
   box-shadow:0 18px 40px rgba(0,0,0,0.18);
   margin-bottom:18px;
 }
 
-/* button row */
+/* btn row */
 .btnRow{ display:flex; gap:16px; justify-content:center; align-items:center; margin-top:8px; }
 .yes, .no {
   border:none;
@@ -111,7 +110,21 @@ body{
   position:relative;
 }
 
-/* final screen */
+/* final card (this one is scrollable internally only) */
+.finalCard{
+  background:rgba(255,255,255,0.12);
+  backdrop-filter: blur(14px);
+  padding:28px;
+  border-radius:28px;
+  box-shadow:0 22px 56px rgba(0,0,0,0.16);
+  margin:12px 0;
+  width:100%;
+  max-height: calc(100vh - 40px); /* keep card inside viewport */
+  overflow:auto;                 /* <--- only this card scrolls */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* final text and image */
 #finalText{
   font-family:"Playfair Display", serif;
   font-size:clamp(22px,5.2vw,40px);
@@ -122,75 +135,123 @@ body{
 }
 #finalPhoto{
   width:100%;
-  max-height:58vh;    /* <-- controlled final image size */
+  max-height:58vh;
   object-fit:cover;
   border-radius:22px;
   box-shadow:0 20px 50px rgba(0,0,0,0.22);
   margin-top:12px;
 }
 
-/* bouquet + letter area (below final) */
-#extraSection{
+/* extra section (inside finalCard) */
+.extraSection{
   margin-top:18px;
-  padding:18px;
   text-align:center;
+  padding:18px;
 }
+
+/* new header for that section */
+.extraHeader{
+  font-family:"Playfair Display", serif;
+  color:var(--accent);
+  font-size:18px;
+  margin-bottom:12px;
+}
+
 /* closed letter button */
 #letterClosed{
-  background:linear-gradient(90deg,#fff,#ffe6f2);
-  border-radius:16px;
-  padding:14px 18px;
+  background:linear-gradient(90deg,#ffffff,#fff0f8);
+  border-radius:14px;
+  padding:12px 18px;
   display:inline-block;
   cursor:pointer;
   box-shadow:0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* bouquet area */
+#bouquetWrap{
   margin-top:12px;
-}
-
-/* letter content (hidden until open) */
-#letterBox{
-  background:linear-gradient(180deg,#fffdfc,#fff7fb);
-  border-radius:14px;
-  padding:18px;
-  margin:14px auto;
-  max-width:720px;
-  box-shadow:0 12px 30px rgba(0,0,0,0.12);
-  display:none;
-  text-align:left;
-  color:#222;
-  line-height:1.45;
-}
-
-/* bouquet container */
-#bouquet{
-  width:100%;
-  max-width:420px;
-  margin:10px auto 0 auto;
-  min-height:120px;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:6px;
-  opacity:0;
-  transition:opacity .8s ease;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
-/* each rose bubble */
+/* emoji roses */
 .rose{
-  font-size:28px;
-  transform:translateY(18px) scale(.9);
+  font-size:26px;
+  transform:translateY(12px) scale(.95);
   opacity:0;
   transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .6s;
-  filter:drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+}
+.bouquetVisible .rose{ transform:translateY(0) scale(1); opacity:1; }
+
+/* bouquet image fallback */
+#bouquetImg{
+  max-width:320px;
+  width:90%;
+  border-radius:18px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.18);
+  display:none;
+  margin-top:12px;
 }
 
-/* when bouquet becomes visible */
-#bouquet.visible{ opacity:1; }
-#bouquet.visible .rose{
-  transform:translateY(0) scale(1);
-  opacity:1;
+/* letter box (hidden until opened) */
+#letterBox{
+  display:none;
+  margin-top:14px;
+  background:linear-gradient(180deg,#fffdfc,#fff7fb);
+  padding:18px;
+  border-radius:12px;
+  max-width:680px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.12);
+  color:#222;
+  text-align:left;
+  line-height:1.45;
+  white-space:pre-line;
+  border: 3px solid rgba(255,46,136,0.08);
 }
 
-/* floating hearts + confetti pieces */
+/* framed modal letter */
+#letterModal{
+  position:fixed; left:0; right:0; top:0; bottom:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  background:rgba(0,0,0,0.25);
+}
+#letterCard{
+  background:linear-gradient(180deg,#fff,#fff8fb);
+  width:min(92vw,720px);
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.35);
+  transform:scale(.98);
+  transition: transform .22s ease, opacity .22s;
+  position:relative;
+}
+#letterCard.show{ transform:scale(1); }
+
+/* letter frame styling */
+.letter-frame{
+  border: 2px dashed rgba(255,46,136,0.18);
+  padding:16px;
+  border-radius:10px;
+  background:linear-gradient(180deg,#fffdfc,#fff7fb);
+}
+
+/* close button */
+#closeLetter{
+  position:absolute;
+  right:14px; top:12px;
+  background:transparent;
+  border:none;
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* floating hearts + confetti */
 .floating-heart{
   position:fixed;
   bottom:-20px;
@@ -198,7 +259,7 @@ body{
   pointer-events:none;
   animation:floatUp linear forwards;
 }
-@keyframes floatUp{ to { transform:translateY(-120vh) rotate(180deg); opacity:0; } }
+@keyframes floatUp{ to{ transform:translateY(-120vh) rotate(180deg); opacity:0;} }
 
 .confetti-piece{
   position:fixed;
@@ -208,7 +269,7 @@ body{
   animation:fall linear forwards;
   pointer-events:none;
 }
-@keyframes fall{ to{ transform:translateY(120vh) rotate(360deg); } }
+@keyframes fall{ to{ transform:translateY(120vh) rotate(360deg);} }
 
 /* responsive tweaks */
 @media(min-width:900px){
@@ -220,25 +281,44 @@ body{
 <body>
   <div class="container">
 
-    <!-- START -->
+    <!-- START CARD (initial) -->
     <div class="card" id="startCard">
       <img id="envelope" src="envelope.png.jpg" alt="Envelope for Alya" onclick="openLetter()" />
       <h2 class="title">For Alya💗💌</h2>
       <button class="openBtn pulse" onclick="openLetter()">Open</button>
     </div>
 
-    <!-- the container where screens swap -->
+    <!-- where screens will appear; only finalCard will scroll internally -->
     <div id="screenHolder"></div>
 
-    <!-- NOTE: extraSection will be added to screenHolder on final; kept here for clarity -->
+  </div>
+
+  <!-- letter modal (hidden) -->
+  <div id="letterModal" aria-hidden="true">
+    <div id="letterCard" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+      <button id="closeLetter" onclick="closeModal()">✕</button>
+      <div style="text-align:center; margin-bottom:8px; font-family:'Playfair Display', serif; color:var(--accent); font-size:20px;">A small note</div>
+      <div class="letter-frame">
+        <div id="modalLetterText" style="white-space:pre-line; color:#111; line-height:1.45;">
+          <!-- >>> YOUR LETTER TEXT HERE >>> Replace the text below with your own message. Keep line breaks. -->
+          Dear Alya,
+
+          (Replace this text with your personal letter. Write whatever you want her to read.)
+
+          Love,
+          Seif
+          <!-- <<< end editable area -->
+        </div>
+      </div>
+    </div>
   </div>
 
 <script>
-/* ---------- Globals ---------- */
+/* ---------- globals ---------- */
 window._heartsInterval = null;
 window._confettiInterval = null;
 
-/* ---------- Open letter (question) ---------- */
+/* ---------- open question screen (safe inline handlers) ---------- */
 function openLetter(){
   const holder = document.getElementById('screenHolder');
   holder.innerHTML = `
@@ -251,12 +331,12 @@ function openLetter(){
       </div>
     </div>
   `;
-  // make sure any previous intervals cleared
+  // stop any previous visuals (defensive)
   if(window._heartsInterval){ clearInterval(window._heartsInterval); window._heartsInterval = null; }
   if(window._confettiInterval){ clearInterval(window._confettiInterval); window._confettiInterval = null; }
 }
 
-/* ---------- NO button behavior (adds messages + moves) ---------- */
+/* ---------- NO button chaotic messages + move ---------- */
 let _noIndex = 0;
 let _yesScale = 1;
 const messages = [
@@ -277,87 +357,85 @@ function noClicked(el){
     el.textContent = "Still no? 😭";
   }
 
-  // grow the Yes button
+  // grow Yes
   _yesScale += 0.32;
   const yes = document.getElementById('yesBtn');
   if(yes){ yes.style.transform = 'scale(' + _yesScale + ')'; yes.style.transition = 'transform .22s ease'; }
 
-  // move the no button to a random spot
+  // teleport No
   el.style.position = 'absolute';
-  el.style.left = Math.min(84, 6 + Math.random()*78) + '%';
+  el.style.left = Math.min(86, 6 + Math.random()*78) + '%';
   el.style.top  = Math.min(82, 8 + Math.random()*72) + '%';
   el.style.zIndex = 9999;
 }
 
-/* ---------- Final screen (Yes) ---------- */
+/* ---------- show final (Yes) ---------- */
 function showFinal(){
   const holder = document.getElementById('screenHolder');
 
-  // final HTML includes final image and an extra scroll section with bouquet + letter
   holder.innerHTML = `
-    <div class="card" id="finalCard">
-      <div id="finalText" style="font-size:clamp(20px,5vw,36px);">
-        <div style="font-size:1.05rem; margin-bottom:8px; color:#ff2e88; font-family:'Poppins',sans-serif;">Love youu💞</div>
+    <div class="finalCard" id="finalCard">
+      <div id="finalText">
+        <div style="font-size:1rem; margin-bottom:8px; color:#ff2e88; font-family:'Poppins',sans-serif;">Love youu💞</div>
         <div style="font-family:'Playfair Display', serif; color:#fff; text-shadow:0 6px 18px rgba(0,0,0,0.18);">
           You had no choice 😌💕<br><br>Guess we have plans now 😁
         </div>
       </div>
 
       <img id="finalPhoto" src="finalphoto.jpg.jpg" alt="Us">
-    </div>
 
-    <div id="extraSection" class="card" style="margin-top:18px;">
-      <div style="font-family:'Playfair Display',serif; color:var(--accent); font-size:20px; margin-bottom:10px;">A little surprise</div>
+      <div class="extraSection">
+        <div class="extraHeader">Here's your flowers (sorry they not real😔)</div>
 
-      <!-- closed letter (click to open) -->
-      <div id="letterClosed" onclick="openLetterBox()">
-        📜 Open letter
-      </div>
+        <div id="letterClosed" onclick="openModal()">📜 Open letter</div>
 
-      <!-- bouquet placeholder (roses will be added by JS) -->
-      <div id="bouquet" aria-hidden="true"></div>
+        <div id="bouquetWrap" aria-hidden="true">
+          <!-- bouquetImg will show if you upload bouquet.jpg; otherwise the emoji roses show -->
+          <img id="bouquetImg" src="bouquet.jpg" alt="bouquet" onerror="this.style.display='none'">
+          <div id="emojiBouquet" class="">
+            <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+            <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+            <div class="rose">🌹</div><div class="rose">🌹</div><div class="rose">🌹</div>
+          </div>
 
-      <!-- letter content (hidden until open) -->
-      <div id="letterBox" aria-hidden="true">
-        <!-- >>> REPLACE THE TEXT BELOW with your personal letter. Keep it inside the <div id="letterText"> ... </div> -->
-        <div id="letterText" contenteditable="false" style="white-space:pre-line;">
-          Dear Alya,
-
-          (Replace this with your message — write whatever you want her to read. Keep it honest, short, and from the heart.)
-
-          Love,
-          Seif
         </div>
-        <!-- <<< end editable area -->
+
+        <div id="letterBox"></div>
       </div>
     </div>
   `;
 
-  // start the celebration visuals
+  // start sounds/visuals
   startHeartsContinuous();
   startConfettiContinuous();
 
-  // small delay then show bouquet fade-in
-  setTimeout(()=> {
-    const b = document.getElementById('bouquet');
-    if(b){
-      // create 9 roses
-      b.innerHTML = '';
-      for(let i=0;i<9;i++){
-        const r = document.createElement('div');
-        r.className = 'rose';
-        r.innerHTML = '🌹';
-        r.style.fontSize = (20 + Math.random()*18) + 'px';
-        r.style.margin = '0 4px';
-        b.appendChild(r);
-      }
-      // trigger visible state (fades in)
-      setTimeout(()=> b.classList.add('visible'), 80);
+  // bouquet reveal after a small delay
+  setTimeout(()=>{
+    const wrap = document.getElementById('bouquetWrap');
+    if(!wrap) return;
+    // try to use bouquetImg if it loaded
+    const img = document.getElementById('bouquetImg');
+    if(img && img.complete && img.naturalWidth !== 0){
+      img.style.display='block';
+      // maybe animate
+      img.style.opacity='0';
+      img.style.transform='scale(.98)';
+      setTimeout(()=>{ img.style.transition='opacity .6s, transform .4s'; img.style.opacity='1'; img.style.transform='scale(1)'; },80);
+    } else {
+      // show emoji bouquet
+      const emoji = document.getElementById('emojiBouquet');
+      emoji.classList.add('bouquetVisible');
+      // stagger each rose
+      Array.from(emoji.children).forEach((r,i)=>{
+        r.style.transitionDelay = (i*80) + 'ms';
+        r.style.transform = 'translateY(0) scale(1)';
+        r.style.opacity = '1';
+      });
     }
-  }, 600);
+  }, 450);
 }
 
-/* ---------- Hearts & Confetti (continuous) ---------- */
+/* ---------- hearts + confetti ---------- */
 function startHeartsContinuous(){
   if(window._heartsInterval) clearInterval(window._heartsInterval);
   window._heartsInterval = setInterval(()=>{
@@ -368,7 +446,7 @@ function startHeartsContinuous(){
     heart.style.fontSize = (18 + Math.random()*22) + 'px';
     heart.style.animationDuration = (3500 + Math.random()*2000) + 'ms';
     document.body.appendChild(heart);
-    setTimeout(()=> heart.remove(), 7000);
+    setTimeout(()=> heart.remove(), 8000);
   }, 420);
 }
 
@@ -384,40 +462,55 @@ function startConfettiContinuous(){
     piece.style.height = (8 + Math.random()*16) + 'px';
     piece.style.animationDuration = (2800 + Math.random()*2200) + 'ms';
     document.body.appendChild(piece);
-    setTimeout(()=> piece.remove(), 6000);
+    setTimeout(()=> piece.remove(), 7000);
   }, 140);
 }
 
-/* ---------- Letter open interaction: blooms bouquet & reveals letter ---------- */
-function openLetterBox(){
-  // reveal letter box
+/* ---------- letter modal open/close ---------- */
+function openModal(){
+  // show the modal overlay & populate letter text into the modal (for nice framed look)
+  const modal = document.getElementById('letterModal');
+  modal.style.display = 'flex';
+  const card = document.getElementById('letterCard');
+  setTimeout(()=> card.classList.add('show'), 30);
+
+  // bloom bouquet (if emoji) and reveal letter inline under final card too
+  // reveal letterBox inside finalCard as well (so it's visible under modal area too)
   const letterBox = document.getElementById('letterBox');
-  const bouquet = document.getElementById('bouquet');
-  const closed = document.getElementById('letterClosed');
-  if(closed) closed.style.display = 'none';
-  if(letterBox) letterBox.style.display = 'block';
-  if(bouquet) {
-    bouquet.classList.add('visible');
-    // add a little pop animation for flowers (stagger)
-    const roses = bouquet.querySelectorAll('.rose');
-    roses.forEach((r,i)=>{
-      r.style.transitionDelay = (i * 80) + 'ms';
+  if(letterBox){
+    letterBox.innerHTML = ''; // will copy the same text below
+    // copy modal content into inline letterBox (keeps same text)
+    const modalText = document.getElementById('modalLetterText');
+    if(modalText) letterBox.innerHTML = '<div id="letterBoxInner" class="letter-frame">' + modalText.innerHTML + '</div>';
+    letterBox.style.display = 'block';
+  }
+
+  // animate bouquet if emoji
+  const emoji = document.getElementById('emojiBouquet');
+  if(emoji){
+    emoji.classList.add('bouquetVisible');
+    Array.from(emoji.children).forEach((r,i)=>{
+      r.style.transitionDelay = (i*60) + 'ms';
       r.style.transform = 'translateY(0) scale(1)';
       r.style.opacity = '1';
     });
   }
-  // scroll to letter smoothly
-  setTimeout(()=> {
-    const target = letterBox || bouquet;
-    if(target) target.scrollIntoView({behavior:'smooth', block:'center'});
-  }, 120);
 }
 
-/* cleanup intervals on leave */
-window.addEventListener('beforeunload',()=>{
+function closeModal(){
+  const modal = document.getElementById('letterModal');
+  const card = document.getElementById('letterCard');
+  if(card) card.classList.remove('show');
+  setTimeout(()=>{ if(modal) modal.style.display='none'; }, 220);
+}
+
+/* cleanup */
+window.addEventListener('beforeunload', ()=>{
   if(window._heartsInterval) clearInterval(window._heartsInterval);
   if(window._confettiInterval) clearInterval(window._confettiInterval);
 });
+
+/* auto-run note: if user refreshes on final card it won't auto-open; everything runs when Yes clicked */
 </script>
 </body>
 </html>
