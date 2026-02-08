@@ -2,21 +2,20 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You 💗</title>
+<title>For Alya 💗</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body{
 margin:0;
-padding:0;
 background:linear-gradient(to bottom,#ffd6ec,#ffc1e3);
 font-family:'Poppins',sans-serif;
-overflow-x:hidden;
 text-align:center;
+overflow-x:hidden;
 }
 
-/* GENERAL SECTION */
+/* SECTIONS */
 .section{
 width:100%;
 min-height:100vh;
@@ -24,7 +23,6 @@ display:none;
 padding:40px 20px;
 box-sizing:border-box;
 }
-
 .active{
 display:block;
 }
@@ -34,21 +32,21 @@ display:block;
 background:#ffeaf6;
 border-radius:25px;
 padding:25px;
-max-width:400px;
+max-width:420px;
 margin:0 auto;
-box-shadow:0 15px 40px rgba(0,0,0,0.15);
+box-shadow:0 20px 50px rgba(0,0,0,0.15);
 }
 
 /* ENVELOPE */
 .envelope-img{
 width:100%;
-max-width:380px;
+max-width:400px;
 border-radius:20px;
 }
 
 .open-btn{
 margin-top:20px;
-padding:14px 40px;
+padding:15px 40px;
 border:none;
 border-radius:30px;
 font-size:18px;
@@ -57,21 +55,19 @@ color:white;
 cursor:pointer;
 animation:pulse 2s infinite;
 }
-
 @keyframes pulse{
 0%{transform:scale(1);}
 50%{transform:scale(1.08);}
 100%{transform:scale(1);}
 }
 
-/* MAIN IMAGE */
+/* MAIN */
 .main-img{
 width:100%;
 border-radius:25px;
 margin-top:15px;
 }
 
-/* TITLE */
 h2{
 font-family:'Playfair Display',serif;
 color:white;
@@ -103,57 +99,69 @@ background:#333;
 color:white;
 cursor:pointer;
 margin-left:10px;
-transition:0.3s;
 }
 
 .no-text{
+margin-top:15px;
 background:#333;
 color:white;
 padding:12px 22px;
 border-radius:25px;
 display:inline-block;
-margin-top:15px;
 }
 
 /* LOVE TEXT */
 .love-text{
-font-family:'Playfair Display',serif;
-font-size:26px;
-color:white;
-margin-top:10px;
 display:none;
+font-family:'Playfair Display',serif;
+font-size:28px;
+color:white;
+margin-top:15px;
 }
 
 /* CONFETTI */
 .confetti{
 position:fixed;
-width:10px;
-height:10px;
-background:pink;
+width:8px;
+height:8px;
 top:-10px;
-animation:fall 3s linear infinite;
+animation:fall 3s linear forwards;
 }
-
 @keyframes fall{
 to{transform:translateY(100vh);}
 }
 
-/* SURPRISE BUTTON */
+/* HEARTS */
+.heart{
+position:fixed;
+bottom:-20px;
+font-size:20px;
+animation:float 5s linear forwards;
+}
+@keyframes float{
+to{transform:translateY(-100vh);}
+}
+
+/* SURPRISE */
 .surprise-btn{
-margin-top:40px;
-background:white;
-padding:12px 30px;
-border-radius:30px;
+margin-top:30px;
+padding:12px 25px;
 border:none;
+border-radius:25px;
+background:white;
+color:#ff2d7a;
 cursor:pointer;
 }
 
-/* BOUQUET PAGE */
+/* BOUQUET */
 .bouquet-img{
 width:85%;
 max-width:350px;
 border-radius:20px;
 margin-top:20px;
+opacity:0;
+transform:scale(0.9);
+transition:0.6s;
 }
 
 /* LETTER MODAL */
@@ -178,18 +186,16 @@ border-radius:20px;
 border:4px solid #ffc1e3;
 text-align:left;
 }
-
 .close{
 float:right;
 cursor:pointer;
-font-size:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ENVELOPE PAGE -->
+<!-- ENVELOPE -->
 <div class="section active" id="envelopePage">
 <div class="card">
 <img src="envelope.png" class="envelope-img">
@@ -209,11 +215,16 @@ font-size:20px;
 <button class="no-btn" id="noBtn" onclick="noClicked()">No 😢</button>
 </div>
 
-<div id="noTexts"></div>
+<div id="noContainer"></div>
 
-<div class="love-text" id="loveText">Love youu💞</div>
+<div class="love-text" id="loveText">
+Love youu💞<br>
+You had no choice anw 😌💕<br>
+Guess we have plans now 😁
+</div>
 
-<button class="surprise-btn" onclick="openBouquet()">A little surprise ✨</button>
+<button class="surprise-btn" id="surpriseBtn" style="display:none;" onclick="openBouquet()">A little surprise ✨</button>
+
 </div>
 </div>
 
@@ -222,25 +233,21 @@ font-size:20px;
 <div class="card">
 <h2 style="color:#ff2d7a;">Here’s your flowers (sorry they not real😔)</h2>
 
-<img src="https://i.imgur.com/6Iej2c3.jpg" class="bouquet-img">
+<img src="https://i.imgur.com/6Iej2c3.jpg" class="bouquet-img" id="bouquetImg">
 
 <button class="surprise-btn" onclick="openLetter()">📜 Open letter</button>
 </div>
 </div>
 
-<!-- LETTER MODAL -->
+<!-- LETTER -->
 <div class="modal" id="letterModal">
 <div class="modal-content">
 <span class="close" onclick="closeLetter()">✖</span>
-
 <h3 style="font-family:'Playfair Display',serif;">A small note</h3>
 
 <p>
 Dear Alya,<br><br>
-
-(Replace this text with your real letter.  
-Keep line breaks exactly like this.)<br><br>
-
+(Replace this with your real letter.)<br><br>
 Love,<br>
 Seif 💞
 </p>
@@ -256,19 +263,17 @@ document.getElementById("envelopePage").classList.remove("active");
 document.getElementById("mainPage").classList.add("active");
 }
 
-function openBouquet(){
-document.getElementById("mainPage").classList.remove("active");
-document.getElementById("bouquetPage").classList.add("active");
-}
-
 function yesClicked(){
 document.getElementById("loveText").style.display="block";
-document.getElementById("yesBtn").style.transform="scale(1.2)";
-createConfetti();
+document.getElementById("surpriseBtn").style.display="inline-block";
+document.getElementById("yesBtn").style.transform="scale(1.3)";
+document.getElementById("noBtn").style.display="none";
+confetti();
+hearts();
 }
 
-function createConfetti(){
-for(let i=0;i<40;i++){
+function confetti(){
+for(let i=0;i<50;i++){
 let c=document.createElement("div");
 c.className="confetti";
 c.style.left=Math.random()*100+"vw";
@@ -276,6 +281,18 @@ c.style.background=["#ff4fa3","#ff99cc","#ffffff"][Math.floor(Math.random()*3)];
 c.style.animationDuration=(2+Math.random()*2)+"s";
 document.body.appendChild(c);
 setTimeout(()=>c.remove(),3000);
+}
+}
+
+function hearts(){
+for(let i=0;i<20;i++){
+let h=document.createElement("div");
+h.className="heart";
+h.innerHTML="💖";
+h.style.left=Math.random()*100+"vw";
+h.style.animationDuration=(3+Math.random()*3)+"s";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),5000);
 }
 }
 
@@ -289,15 +306,12 @@ let texts=[
 "Still no? 😭"
 ];
 
-let container=document.getElementById("noTexts");
+let container=document.getElementById("noContainer");
 
 if(noCount < texts.length){
 container.innerHTML=`<div class="no-text">${texts[noCount]}</div>`;
 noCount++;
-document.getElementById("yesBtn").style.transform=`scale(${1 + noCount*0.1})`;
-}else{
-container.innerHTML="";
-noCount=0;
+document.getElementById("yesBtn").style.transform=`scale(${1 + noCount*0.15})`;
 }
 
 if(noCount===texts.length){
@@ -305,10 +319,18 @@ document.getElementById("noBtn").style.display="none";
 }
 }
 
+function openBouquet(){
+document.getElementById("mainPage").classList.remove("active");
+document.getElementById("bouquetPage").classList.add("active");
+setTimeout(()=>{
+document.getElementById("bouquetImg").style.opacity="1";
+document.getElementById("bouquetImg").style.transform="scale(1)";
+},100);
+}
+
 function openLetter(){
 document.getElementById("letterModal").style.display="flex";
 }
-
 function closeLetter(){
 document.getElementById("letterModal").style.display="none";
 }
