@@ -34,6 +34,12 @@ body{
   border-radius:30px;
   box-shadow:0 20px 50px rgba(0,0,0,0.15);
   position:relative;
+  animation:fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
 h1{
@@ -79,7 +85,7 @@ button{
   object-fit:cover;
   border-radius:25px;
   margin-bottom:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.25);
+  box-shadow:0 0 40px rgba(255,46,136,0.6);
 }
 
 .pulse{
@@ -95,7 +101,8 @@ button{
 .floating-heart{
   position:fixed;
   bottom:-20px;
-  font-size:26px;
+  font-size:22px;
+  opacity:0.8;
   animation:floatUp linear forwards;
   pointer-events:none;
 }
@@ -104,11 +111,11 @@ button{
   to{transform:translateY(-120vh);opacity:0;}
 }
 
-.confetti-piece{
+.floating-flower{
   position:fixed;
   top:-20px;
-  width:8px;
-  height:14px;
+  font-size:18px;
+  opacity:0.6;
   animation:fall linear forwards;
   pointer-events:none;
 }
@@ -133,7 +140,11 @@ button{
 
 <script>
 
+let currentPage = "start";
+let scrollAttached = false;
+
 function openLetter(){
+  currentPage = "question";
   document.getElementById("container").innerHTML = `
     <div class="card">
       <img id="mainPhoto" src="mainphoto.jpg">
@@ -162,20 +173,30 @@ function setupButtons(){
   let scale=1;
 
   noBtn.addEventListener("click",function(){
+
     if(index < messages.length){
       noBtn.textContent = messages[index];
       index++;
     } else {
       noBtn.textContent="Still no? 😭";
     }
+
     scale+=0.35;
     yesBtn.style.transform="scale("+scale+")";
+
+    noBtn.style.position="absolute";
+    noBtn.style.left=Math.random()*70+"%";
+    noBtn.style.top=Math.random()*60+"%";
   });
 
   yesBtn.addEventListener("click",function(){
 
+    currentPage = "final";
+
     document.body.style.overflowY="auto";
     document.getElementById("container").style.alignItems="flex-start";
+
+    window.scrollTo(0,0);
 
     document.getElementById("container").innerHTML=`
       <div class="card">
@@ -189,23 +210,30 @@ function setupButtons(){
     `;
 
     startHearts();
-    startConfetti();
+    startFlowers();
 
-    let triggered=false;
-
-    window.addEventListener("scroll",function(){
-      if(triggered) return;
-      if(window.scrollY > 40){
-        triggered=true;
-        loadLetterPage();
-      }
-    });
+    if(!scrollAttached){
+      window.addEventListener("scroll",handleScroll);
+      scrollAttached = true;
+    }
   });
 }
 
+function handleScroll(){
+  if(currentPage==="final" && window.scrollY>40){
+    loadLetterPage();
+  }
+  else if(currentPage==="letter" && window.scrollY<10){
+    loadFinalPage();
+  }
+}
+
 function loadLetterPage(){
+  currentPage="letter";
   document.body.style.overflow="hidden";
   document.getElementById("container").style.alignItems="center";
+
+  window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
     <div class="card">
@@ -227,6 +255,25 @@ function loadLetterPage(){
       ">
         Open
       </div>
+    </div>
+  `;
+}
+
+function loadFinalPage(){
+  currentPage="final";
+  document.body.style.overflowY="auto";
+  document.getElementById("container").style.alignItems="flex-start";
+
+  window.scrollTo(0,0);
+
+  document.getElementById("container").innerHTML=`
+    <div class="card">
+      <div class="love-text">Love you💕</div>
+      <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
+      <img id="finalPhoto" src="finalphoto.jpg.jpg">
+      <p style="color:white;font-weight:600;">
+        Scroll for something special ↓
+      </p>
     </div>
   `;
 }
@@ -281,19 +328,19 @@ function startHearts(){
   },400);
 }
 
-function startConfetti(){
-  const colors=["#ff2e88","#ffffff","#ffb6d9","#ff66b3"];
+function startFlowers(){
   setInterval(()=>{
-    const piece=document.createElement("div");
-    piece.className="confetti-piece";
-    piece.style.left=Math.random()*100+"vw";
-    piece.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
-    piece.style.animationDuration=(3+Math.random()*2)+"s";
-    document.body.appendChild(piece);
-    setTimeout(()=>piece.remove(),5000);
-  },150);
+    const flower=document.createElement("div");
+    flower.className="floating-flower";
+    flower.innerHTML="🌸";
+    flower.style.left=Math.random()*100+"vw";
+    flower.style.animationDuration=(5+Math.random()*3)+"s";
+    document.body.appendChild(flower);
+    setTimeout(()=>flower.remove(),7000);
+  },600);
 }
 </script>
 
 </body>
 </html>
+
