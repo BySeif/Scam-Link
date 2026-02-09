@@ -39,7 +39,6 @@ h1{
   font-family:'Playfair Display',serif;
   color:white;
   font-size:clamp(28px,6vw,42px);
-  text-shadow:0 6px 20px rgba(0,0,0,0.25);
   margin-bottom:20px;
 }
 
@@ -48,7 +47,6 @@ h1{
   font-size:clamp(26px,5vw,38px);
   color:#ff2e88;
   margin-bottom:10px;
-  text-shadow:0 6px 20px rgba(255,46,136,0.4);
 }
 
 button{
@@ -63,14 +61,12 @@ button{
 .yes{
   background:linear-gradient(90deg,#ff4d9e,#ff2e88);
   color:white;
-  box-shadow:0 10px 25px rgba(255,46,136,0.4);
   transition:0.2s;
 }
 
 .no{
   background:#555;
   color:white;
-  transition:0.2s;
 }
 
 #mainPhoto,#finalPhoto{
@@ -79,7 +75,6 @@ button{
   object-fit:cover;
   border-radius:25px;
   margin-bottom:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.25);
 }
 
 .pulse{
@@ -95,7 +90,7 @@ button{
 .floating-heart{
   position:fixed;
   bottom:-20px;
-  font-size:24px;
+  font-size:22px;
   animation:floatUp linear forwards;
   pointer-events:none;
 }
@@ -120,6 +115,19 @@ button{
 @keyframes roseFall{
   to{transform:translateY(120vh);opacity:0;}
 }
+
+.sparkle{
+  position:absolute;
+  color:#fff;
+  font-size:18px;
+  animation:twinkle 2s ease-in-out infinite;
+  pointer-events:none;
+}
+
+@keyframes twinkle{
+  0%,100%{opacity:0;}
+  50%{opacity:1;}
+}
 </style>
 </head>
 
@@ -135,9 +143,7 @@ button{
 
 <script>
 
-let heartInterval;
-let confettiInterval;
-let roseInterval;
+let heartInterval, confettiInterval, roseInterval;
 
 function openLetter(){
   document.getElementById("container").innerHTML=`
@@ -170,10 +176,10 @@ function setupButtons(){
   let scale=1;
 
   noBtn.addEventListener("click",function(){
-    if(index < messages.length){
-      noBtn.textContent = messages[index];
+    if(index<messages.length){
+      noBtn.textContent=messages[index];
       index++;
-    } else {
+    } else{
       noBtn.textContent="Still no? 😭";
     }
 
@@ -185,32 +191,32 @@ function setupButtons(){
     noBtn.style.top=Math.random()*60+"%";
   });
 
-  yesBtn.addEventListener("click",function(){
+  yesBtn.addEventListener("click",loadFinalPage);
+}
 
-    document.body.style.overflowY="auto";
-    document.body.style.alignItems="flex-start";
+function loadFinalPage(){
+  document.body.style.overflowY="auto";
+  document.body.style.alignItems="flex-start";
+  window.scrollTo(0,0);
 
-    document.getElementById("container").innerHTML=`
-      <div class="card">
-        <div class="love-text">Love you💕</div>
-        <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
-        <img id="finalPhoto" src="finalphoto.jpg.jpg">
-        <p style="margin-top:20px;color:white;font-weight:600;">
-          Scroll down ↓
-        </p>
-      </div>
-    `;
+  document.getElementById("container").innerHTML=`
+    <div class="card">
+      <div class="love-text">Love you💕</div>
+      <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
+      <img id="finalPhoto" src="finalphoto.jpg.jpg">
+      <p style="color:white;font-weight:600;">Scroll down ↓</p>
+    </div>
+    <div style="height:400px;"></div>
+  `;
 
-    startHearts();
-    startConfetti();
+  startHearts();
+  startConfetti();
 
-    window.addEventListener("scroll", handleScroll);
-  });
+  window.addEventListener("scroll",handleScroll,{once:true});
 }
 
 function handleScroll(){
-  if(window.scrollY > 200){
-    window.removeEventListener("scroll", handleScroll);
+  if(window.scrollY>150){
     loadBouquetPage();
   }
 }
@@ -230,21 +236,34 @@ function loadBouquetPage(){
         Heres ur flowers (sorry there not real)❤️
       </h1>
 
-      <div style="position:relative;display:inline-block;">
-        <img src="bouquet.jpg" style="width:100%;border-radius:25px;">
-
-        <div onclick="openLoveLetter()"
-             style="position:absolute;top:12%;right:15%;width:100px;height:70px;cursor:pointer;">
-        </div>
-
-        <div style="position:absolute;top:5%;right:5%;color:#ff4d9e;font-weight:600;">
-          ← Click the note 💌
-        </div>
+      <div style="position:relative;display:flex;justify-content:center;">
+        <img id="bouquetImg"
+             src="bouquet.jpg"
+             style="width:100%;max-width:450px;border-radius:25px;cursor:pointer;transition:0.3s;box-shadow:0 0 30px rgba(255,77,158,0.4);">
       </div>
     </div>
   `;
 
+  const img=document.getElementById("bouquetImg");
+
+  img.addEventListener("mouseenter",()=>img.style.transform="scale(1.04)");
+  img.addEventListener("mouseleave",()=>img.style.transform="scale(1)");
+  img.addEventListener("click",openLoveLetter);
+
+  addSparkles();
   startRoseShower();
+}
+
+function addSparkles(){
+  const container=document.getElementById("container");
+  for(let i=0;i<3;i++){
+    const s=document.createElement("div");
+    s.className="sparkle";
+    s.innerHTML="✨";
+    s.style.left=Math.random()*80+"%";
+    s.style.top=Math.random()*60+"%";
+    container.appendChild(s);
+  }
 }
 
 function startHearts(){
@@ -269,7 +288,7 @@ function startConfetti(){
     piece.style.animationDuration=(5+Math.random()*3)+"s";
     document.body.appendChild(piece);
     setTimeout(()=>piece.remove(),8000);
-  },500);
+  },600);
 }
 
 function startRoseShower(){
@@ -279,24 +298,23 @@ function startRoseShower(){
     rose.style.position="fixed";
     rose.style.top="-30px";
     rose.style.left=Math.random()*100+"vw";
-    rose.style.fontSize=(20+Math.random()*15)+"px";
+    rose.style.fontSize=(20+Math.random()*12)+"px";
     rose.style.opacity="0.8";
     rose.style.pointerEvents="none";
-    rose.style.animation=`roseFall ${6+Math.random()*4}s linear forwards`;
+    rose.style.animation=`roseFall ${7+Math.random()*4}s linear forwards`;
     document.body.appendChild(rose);
     setTimeout(()=>rose.remove(),10000);
   },1200);
 }
 
 function openLoveLetter(){
-
   const overlay=document.createElement("div");
   overlay.style.position="fixed";
   overlay.style.top="0";
   overlay.style.left="0";
   overlay.style.width="100%";
   overlay.style.height="100%";
-  overlay.style.background="rgba(0,0,0,0.7)";
+  overlay.style.background="rgba(0,0,0,0.75)";
   overlay.style.display="flex";
   overlay.style.justifyContent="center";
   overlay.style.alignItems="center";
@@ -304,23 +322,27 @@ function openLoveLetter(){
 
   overlay.innerHTML=`
     <div style="
-      width:85%;
-      max-width:420px;
-      background:white;
-      padding:30px;
-      border-radius:25px;
+      width:90%;
+      max-width:450px;
+      background:#fff;
+      padding:40px 30px;
+      border-radius:20px;
+      border:8px solid #ff4d9e;
+      box-shadow:0 0 50px rgba(255,77,158,0.6);
       font-family:'Playfair Display',serif;
       color:#333;
       position:relative;
     ">
-      <div style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:20px;"
+      <div style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:22px;font-weight:bold;"
            onclick="this.closest('div').parentElement.remove()">
         ✕
       </div>
 
-      <h2 style="color:#ff2e88;text-align:center;">For You 💗</h2>
+      <h2 style="color:#ff2e88;text-align:center;margin-bottom:20px;">
+        For You 💗
+      </h2>
 
-      <p style="margin-top:20px;line-height:1.6;">
+      <p style="line-height:1.7;font-size:17px;">
         Dear Alya,<br><br>
         (Write your real message here.)<br><br>
         Love,<br>
@@ -333,6 +355,5 @@ function openLoveLetter(){
 }
 
 </script>
-
 </body>
 </html>
