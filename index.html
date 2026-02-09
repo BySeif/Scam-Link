@@ -222,18 +222,24 @@ function loadBouquetPage(){
   window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
-    <div style="padding:60px 20px;">
-      <h1 style="color:#ff4d9e;">
+    <div style="padding:30px 20px 60px 20px;">
+
+      <h1 style="color:#ff4d9e;margin-bottom:10px;">
         Heres ur flowers (sorry there not real)❤️
       </h1>
-      <p style="color:#ff4d9e;margin-top:-10px;">Scroll up ↑</p>
+
+      <p style="color:#ff4d9e;margin-bottom:30px;">
+        Scroll up ↑
+      </p>
 
       <img id="bouquetImg"
            src="bouquet.jpg"
-           style="width:100%;max-width:450px;border-radius:25px;cursor:pointer;margin-top:30px;">
-      <p style="color:#ff4d9e;margin-top:15px;">
-        Tap the flowers 💌
+           style="width:100%;max-width:450px;border-radius:25px;cursor:pointer;margin-top:10px;">
+
+      <p style="color:#ff4d9e;margin-top:25px;font-weight:600;">
+        Tap the letter 💌
       </p>
+
     </div>
   `;
 
@@ -241,9 +247,10 @@ function loadBouquetPage(){
 
   startRoseShower();
 
+  // 🔥 SCROLL UP GOES BACK TO FINAL PAGE (NOT RELOAD)
   window.addEventListener("scroll", function(){
     if(currentPage==="bouquet" && window.scrollY < 20){
-      location.reload();
+      loadFinalPage();
     }
   });
 }
