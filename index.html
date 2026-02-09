@@ -69,6 +69,17 @@ button{
   color:white;
 }
 
+/* Open button breathing */
+.pulse{
+  animation:pulse 1.6s infinite ease-in-out;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.08);}
+  100%{transform:scale(1);}
+}
+
 #mainPhoto,#finalPhoto{
   width:100%;
   max-height:50vh;
@@ -82,16 +93,7 @@ button{
   50%{transform:scale(1.05);}
   100%{transform:scale(1);}
 }
-.pulse{
-  animation:pulse 1.6s infinite ease-in-out;
-}
 
-@keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.08);}
-  100%{transform:scale(1);}
-}
-  
 @keyframes floatUp{
   to{transform:translateY(-120vh);opacity:0;}
 }
@@ -218,7 +220,6 @@ function loadFinalPage(){
 }
 
 function loadBouquetPage(){
-
   currentPage="bouquet";
 
   clearInterval(heartInterval);
@@ -250,7 +251,6 @@ function loadBouquetPage(){
   `;
 
   document.getElementById("bouquetImg").onclick=openLoveLetter;
-
   startRoseShower();
 
   window.onscroll=function(){
