@@ -38,7 +38,6 @@ h1{
   font-family:'Playfair Display',serif;
   color:white;
   font-size:clamp(28px,6vw,42px);
-  text-shadow:0 6px 20px rgba(0,0,0,0.25);
   margin-bottom:20px;
 }
 
@@ -47,7 +46,6 @@ h1{
   font-size:clamp(26px,5vw,38px);
   color:#ff2e88;
   margin-bottom:10px;
-  text-shadow:0 6px 20px rgba(255,46,136,0.4);
 }
 
 button{
@@ -62,23 +60,20 @@ button{
 .yes{
   background:linear-gradient(90deg,#ff4d9e,#ff2e88);
   color:white;
-  box-shadow:0 10px 25px rgba(255,46,136,0.4);
   transition:0.2s;
 }
 
 .no{
   background:#555;
   color:white;
-  transition:0.2s;
 }
 
-#mainPhoto, #finalPhoto{
+#mainPhoto,#finalPhoto{
   width:100%;
   max-height:50vh;
   object-fit:cover;
   border-radius:25px;
   margin-bottom:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.25);
 }
 
 .pulse{
@@ -130,6 +125,8 @@ button{
 
 <script>
 
+let currentPage = "start";
+
 function openLetter(){
   document.getElementById("container").innerHTML = `
     <div class="card">
@@ -161,7 +158,6 @@ function setupButtons(){
   let scale=1;
 
   noBtn.addEventListener("click",function(){
-
     if(index < messages.length){
       noBtn.textContent = messages[index];
       index++;
@@ -178,78 +174,80 @@ function setupButtons(){
   });
 
   yesBtn.addEventListener("click",function(){
-
-    document.body.style.overflowY="auto";
-    document.body.style.alignItems="flex-start";
-
-    document.getElementById("container").innerHTML=`
-      <div class="card">
-        <div class="love-text">Love you💕</div>
-        <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
-        <img id="finalPhoto" src="finalphoto.jpg.jpg">
-        <p style="margin-top:20px;color:white;font-weight:600;">
-          Scroll down ↓
-        </p>
-      </div>
-    `;
-
-    startHearts();
-    startConfetti();
-
-    window.addEventListener("scroll", handleScroll);
+    loadFinalPage();
   });
 }
 
-function handleScroll(){
-  if(window.scrollY > 250){
-    window.removeEventListener("scroll", handleScroll);
-    loadBouquetPage();
-  }
-}
-
-function loadBouquetPage(){
+function loadFinalPage(){
+  currentPage="final";
+  document.body.style.overflowY="auto";
+  document.body.style.alignItems="flex-start";
   window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
     <div class="card">
+      <div class="love-text">Love you💕</div>
+      <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
+      <img id="finalPhoto" src="finalphoto.jpg.jpg">
+      <p style="margin-top:20px;color:white;font-weight:600;">
+        Scroll down ↓
+      </p>
+    </div>
+    <div style="height:400px;"></div>
+  `;
+
+  startHearts();
+  startConfetti();
+
+  window.addEventListener("scroll", handleScroll);
+}
+
+function handleScroll(){
+  if(currentPage==="final" && window.scrollY > 150){
+    loadBouquetPage();
+  }
+  else if(currentPage==="bouquet" && window.scrollY < 50){
+    loadFinalPage();
+  }
+}
+
+function loadBouquetPage(){
+  currentPage="bouquet";
+  document.body.style.background="black";
+  document.body.style.overflowY="auto";
+  document.body.style.alignItems="flex-start";
+  window.scrollTo(0,0);
+
+  document.getElementById("container").innerHTML=`
+    <div class="card" style="background:transparent; box-shadow:none;">
       <h1 style="color:#ff2e88;">Here's your flowers 🌹</h1>
 
       <div style="position:relative; display:inline-block;">
         <img src="bouquet.jpg" style="width:100%; border-radius:25px;">
 
-        <!-- Clickable note area -->
         <div onclick="openLoveLetter()" 
              style="
              position:absolute;
-             top:12%;
-             right:15%;
-             width:90px;
-             height:70px;
+             top:10%;
+             right:12%;
+             width:120px;
+             height:90px;
              cursor:pointer;">
         </div>
 
         <div style="
           position:absolute;
-          top:5%;
+          top:3%;
           right:5%;
           color:#ff2e88;
-          font-weight:600;
-          animation:pulse 1.5s infinite;">
+          font-weight:600;">
           ← Click the note 💌
         </div>
       </div>
 
-      <p style="margin-top:20px;color:#ff2e88;font-weight:600;">
-        (Scroll up to go back)
-      </p>
+      <div style="height:400px;"></div>
     </div>
   `;
-
-  window.addEventListener("scroll", function(){
-    if(window.scrollY < 50){
-      location.reload();
-    }
-  });
 }
 
 function openLoveLetter(){
@@ -260,7 +258,7 @@ function openLoveLetter(){
   overlay.style.left="0";
   overlay.style.width="100%";
   overlay.style.height="100%";
-  overlay.style.background="rgba(0,0,0,0.6)";
+  overlay.style.background="rgba(0,0,0,0.7)";
   overlay.style.display="flex";
   overlay.style.justifyContent="center";
   overlay.style.alignItems="center";
@@ -273,9 +271,7 @@ function openLoveLetter(){
       background:white;
       padding:30px;
       border-radius:25px;
-      box-shadow:0 25px 60px rgba(0,0,0,0.3);
       font-family:'Playfair Display',serif;
-      color:#333;
       position:relative;
     ">
       <div style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:20px;"
