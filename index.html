@@ -11,6 +11,9 @@
 body{
   margin:0;
   min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
   background:linear-gradient(160deg,#ffb6d9,#ffd6eb);
   font-family:'Poppins',sans-serif;
   text-align:center;
@@ -20,11 +23,6 @@ body{
 #container{
   width:100%;
   max-width:520px;
-  margin:0 auto;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
 }
 
 .card{
@@ -34,12 +32,6 @@ body{
   border-radius:30px;
   box-shadow:0 20px 50px rgba(0,0,0,0.15);
   position:relative;
-  animation:fadeIn 0.8s ease forwards;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
 }
 
 h1{
@@ -77,15 +69,16 @@ button{
 .no{
   background:#555;
   color:white;
+  transition:0.2s;
 }
 
-#mainPhoto,#finalPhoto{
+#mainPhoto, #finalPhoto{
   width:100%;
   max-height:50vh;
   object-fit:cover;
   border-radius:25px;
   margin-bottom:20px;
-  box-shadow:0 0 40px rgba(255,46,136,0.6);
+  box-shadow:0 20px 50px rgba(0,0,0,0.25);
 }
 
 .pulse{
@@ -101,8 +94,7 @@ button{
 .floating-heart{
   position:fixed;
   bottom:-20px;
-  font-size:22px;
-  opacity:0.8;
+  font-size:26px;
   animation:floatUp linear forwards;
   pointer-events:none;
 }
@@ -111,11 +103,11 @@ button{
   to{transform:translateY(-120vh);opacity:0;}
 }
 
-.floating-flower{
+.confetti-piece{
   position:fixed;
   top:-20px;
-  font-size:18px;
-  opacity:0.6;
+  width:8px;
+  height:14px;
   animation:fall linear forwards;
   pointer-events:none;
 }
@@ -129,28 +121,24 @@ button{
 <body>
 
 <div id="container">
-
   <div class="card">
     <img src="envelope.png.jpg" width="220" onclick="openLetter()" style="cursor:pointer;">
     <h1>For Alya💗💌</h1>
     <button class="yes pulse" onclick="openLetter()">Open</button>
   </div>
-
 </div>
 
 <script>
 
-let currentPage = "start";
-let scrollAttached = false;
-
 function openLetter(){
-  currentPage = "question";
   document.getElementById("container").innerHTML = `
     <div class="card">
       <img id="mainPhoto" src="mainphoto.jpg">
       <h1>Will you be my Valentine? 💖</h1>
-      <button class="yes" id="yesBtn">Yes 💕</button>
-      <button class="no" id="noBtn">No 😢</button>
+      <div>
+        <button class="yes" id="yesBtn">Yes 💕</button>
+        <button class="no" id="noBtn">No 😢</button>
+      </div>
     </div>
   `;
   setupButtons();
@@ -166,7 +154,7 @@ function setupButtons(){
     "Alya that’s kinda mean 😔",
     "Think again...",
     "You dont love me",
-    "Click it now",
+    "Click it now"
   ];
 
   let index=0;
@@ -191,95 +179,82 @@ function setupButtons(){
 
   yesBtn.addEventListener("click",function(){
 
-    currentPage = "final";
-
     document.body.style.overflowY="auto";
-    document.getElementById("container").style.alignItems="flex-start";
-
-    window.scrollTo(0,0);
+    document.body.style.alignItems="flex-start";
 
     document.getElementById("container").innerHTML=`
       <div class="card">
         <div class="love-text">Love you💕</div>
         <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
         <img id="finalPhoto" src="finalphoto.jpg.jpg">
-        <p style="color:white;font-weight:600;">
-          Scroll for something special ↓
+        <p style="margin-top:20px;color:white;font-weight:600;">
+          Scroll down ↓
         </p>
       </div>
     `;
 
     startHearts();
-    startFlowers();
+    startConfetti();
 
-    if(!scrollAttached){
-      window.addEventListener("scroll",handleScroll);
-      scrollAttached = true;
-    }
+    window.addEventListener("scroll", handleScroll);
   });
 }
 
 function handleScroll(){
-  if(currentPage==="final" && window.scrollY>40){
-    loadLetterPage();
-  }
-  else if(currentPage==="letter" && window.scrollY<10){
-    loadFinalPage();
+  if(window.scrollY > 250){
+    window.removeEventListener("scroll", handleScroll);
+    loadBouquetPage();
   }
 }
 
-function loadLetterPage(){
-  currentPage="letter";
-  document.body.style.overflow="hidden";
-  document.getElementById("container").style.alignItems="center";
-
+function loadBouquetPage(){
   window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
     <div class="card">
-      <h1 style="color:#ff2e88;">A little surprise 💌</h1>
-      <div onclick="openLoveLetter()" style="
-        margin:40px auto;
-        width:200px;
-        height:140px;
-        background:#ff4fa3;
-        border-radius:20px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-family:'Playfair Display',serif;
-        font-size:24px;
-        color:white;
-        cursor:pointer;
-        box-shadow:0 15px 40px rgba(0,0,0,0.2);
-      ">
-        Open
+      <h1 style="color:#ff2e88;">Here's your flowers 🌹</h1>
+
+      <div style="position:relative; display:inline-block;">
+        <img src="bouquet.jpg" style="width:100%; border-radius:25px;">
+
+        <!-- Clickable note area -->
+        <div onclick="openLoveLetter()" 
+             style="
+             position:absolute;
+             top:12%;
+             right:15%;
+             width:90px;
+             height:70px;
+             cursor:pointer;">
+        </div>
+
+        <div style="
+          position:absolute;
+          top:5%;
+          right:5%;
+          color:#ff2e88;
+          font-weight:600;
+          animation:pulse 1.5s infinite;">
+          ← Click the note 💌
+        </div>
       </div>
-    </div>
-  `;
-}
 
-function loadFinalPage(){
-  currentPage="final";
-  document.body.style.overflowY="auto";
-  document.getElementById("container").style.alignItems="flex-start";
-
-  window.scrollTo(0,0);
-
-  document.getElementById("container").innerHTML=`
-    <div class="card">
-      <div class="love-text">Love you💕</div>
-      <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
-      <img id="finalPhoto" src="finalphoto.jpg.jpg">
-      <p style="color:white;font-weight:600;">
-        Scroll for something special ↓
+      <p style="margin-top:20px;color:#ff2e88;font-weight:600;">
+        (Scroll up to go back)
       </p>
     </div>
   `;
+
+  window.addEventListener("scroll", function(){
+    if(window.scrollY < 50){
+      location.reload();
+    }
+  });
 }
 
 function openLoveLetter(){
   const overlay=document.createElement("div");
+
   overlay.style.position="fixed";
   overlay.style.top="0";
   overlay.style.left="0";
@@ -303,8 +278,13 @@ function openLoveLetter(){
       color:#333;
       position:relative;
     ">
-      <div onclick="this.parentElement.parentElement.remove()" style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:20px;">✕</div>
+      <div style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:20px;"
+           onclick="document.body.removeChild(this.closest('div').parentElement)">
+        ✕
+      </div>
+
       <h2 style="color:#ff2e88;text-align:center;">For You 💗</h2>
+
       <p style="margin-top:20px;line-height:1.6;">
         Dear Alya,<br><br>
         (Write your real message here.)<br><br>
@@ -313,6 +293,7 @@ function openLoveLetter(){
       </p>
     </div>
   `;
+
   document.body.appendChild(overlay);
 }
 
@@ -328,19 +309,20 @@ function startHearts(){
   },400);
 }
 
-function startFlowers(){
+function startConfetti(){
+  const colors=["#ff2e88","#ffffff","#ffb6d9","#ff66b3"];
   setInterval(()=>{
-    const flower=document.createElement("div");
-    flower.className="floating-flower";
-    flower.innerHTML="🌸";
-    flower.style.left=Math.random()*100+"vw";
-    flower.style.animationDuration=(5+Math.random()*3)+"s";
-    document.body.appendChild(flower);
-    setTimeout(()=>flower.remove(),7000);
-  },600);
+    const piece=document.createElement("div");
+    piece.className="confetti-piece";
+    piece.style.left=Math.random()*100+"vw";
+    piece.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration=(3+Math.random()*2)+"s";
+    document.body.appendChild(piece);
+    setTimeout(()=>piece.remove(),5000);
+  },150);
 }
+
 </script>
 
 </body>
 </html>
-
