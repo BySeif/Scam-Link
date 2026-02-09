@@ -33,6 +33,12 @@ body{
   border-radius:30px;
   box-shadow:0 20px 50px rgba(0,0,0,0.15);
   position:relative;
+  animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
 h1{
@@ -87,16 +93,37 @@ button{
   100%{transform:scale(1);}
 }
 
+.floating-heart{
+  position:fixed;
+  bottom:-20px;
+  font-size:26px;
+  animation:floatUp linear forwards;
+  pointer-events:none;
+}
+
+@keyframes floatUp{
+  to{transform:translateY(-120vh);opacity:0;}
+}
+
+.confetti-piece{
+  position:fixed;
+  top:-20px;
+  width:8px;
+  height:14px;
+  animation:fall linear forwards;
+  pointer-events:none;
+}
+
+@keyframes fall{
+  to{transform:translateY(120vh) rotate(360deg);}
+}
+
 .rose{
   position:fixed;
   top:-20px;
   font-size:24px;
   animation:fall 4s linear forwards;
   pointer-events:none;
-}
-
-@keyframes fall{
-  to{transform:translateY(120vh);}
 }
 </style>
 </head>
@@ -113,10 +140,11 @@ button{
 
 <script>
 
-let currentPage = "start";
+let currentPage="start";
+let scrollActive=false;
 
 function openLetter(){
-  document.getElementById("container").innerHTML = `
+  document.getElementById("container").innerHTML=`
     <div class="card">
       <img id="mainPhoto" src="mainphoto.jpg">
       <h1>Will you be my Valentine? 💖</h1>
@@ -146,10 +174,10 @@ function setupButtons(){
   let scale=1;
 
   noBtn.addEventListener("click",function(){
-    if(index < messages.length){
-      noBtn.textContent = messages[index];
+    if(index<messages.length){
+      noBtn.textContent=messages[index];
       index++;
-    } else {
+    } else{
       noBtn.textContent="Still no? 😭";
     }
 
@@ -167,7 +195,9 @@ function setupButtons(){
 function loadFinalPage(){
   currentPage="final";
   document.body.style.background="linear-gradient(160deg,#ffb6d9,#ffd6eb)";
-  document.body.style.overflow="hidden";
+  document.body.style.overflowY="auto";
+  document.body.style.alignItems="flex-start";
+  window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
     <div class="card">
@@ -176,13 +206,22 @@ function loadFinalPage(){
       <img id="finalPhoto" src="finalphoto.jpg.jpg">
       <p style="color:white;font-weight:600;">Scroll down ↓</p>
     </div>
+    <div style="height:500px;"></div>
   `;
+
+  startHearts();
+  startConfetti();
+
+  if(!scrollActive){
+    window.addEventListener("scroll",handleScroll);
+    scrollActive=true;
+  }
 }
 
 function loadBouquetPage(){
   currentPage="bouquet";
   document.body.style.background="black";
-  document.body.style.overflow="hidden";
+  window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
     <div class="card" style="background:transparent; box-shadow:none;">
@@ -194,28 +233,28 @@ function loadBouquetPage(){
         <img id="roseImg" src="bouquet.jpg" style="width:100%; border-radius:25px; cursor:pointer;">
 
         <div onclick="openLoveLetter()" 
-             style="
-             position:absolute;
-             top:10%;
-             right:12%;
-             width:120px;
-             height:90px;
-             cursor:pointer;">
+             style="position:absolute; top:10%; right:12%; width:120px; height:90px; cursor:pointer;">
         </div>
 
-        <div style="
-          position:absolute;
-          top:3%;
-          right:5%;
-          color:#ff2e88;
-          font-weight:600;">
+        <div style="position:absolute; top:3%; right:5%; color:#ff2e88; font-weight:600;">
           ← Click the note 💌
         </div>
       </div>
+
+      <div style="height:500px;"></div>
     </div>
   `;
 
   document.getElementById("roseImg").addEventListener("click",dropRoses);
+}
+
+function handleScroll(){
+  if(currentPage==="final" && window.scrollY>200){
+    loadBouquetPage();
+  }
+  else if(currentPage==="bouquet" && window.scrollY<50){
+    loadFinalPage();
+  }
 }
 
 function dropRoses(){
@@ -231,7 +270,6 @@ function dropRoses(){
 
 function openLoveLetter(){
   const overlay=document.createElement("div");
-
   overlay.style.position="fixed";
   overlay.style.top="0";
   overlay.style.left="0";
@@ -244,22 +282,12 @@ function openLoveLetter(){
   overlay.style.zIndex="9999";
 
   overlay.innerHTML=`
-    <div style="
-      width:85%;
-      max-width:420px;
-      background:white;
-      padding:30px;
-      border-radius:25px;
-      font-family:'Playfair Display',serif;
-      position:relative;
-    ">
+    <div style="width:85%; max-width:420px; background:white; padding:30px; border-radius:25px; font-family:'Playfair Display',serif; position:relative;">
       <div style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:20px;"
            onclick="document.body.removeChild(this.closest('div').parentElement)">
         ✕
       </div>
-
       <h2 style="color:#ff2e88;text-align:center;">For You 💗</h2>
-
       <p style="margin-top:20px;line-height:1.6;">
         Dear Alya,<br><br>
         (Write your real message here.)<br><br>
@@ -268,20 +296,34 @@ function openLoveLetter(){
       </p>
     </div>
   `;
-
   document.body.appendChild(overlay);
 }
 
-window.addEventListener("wheel", function(e){
-  if(currentPage==="final" && e.deltaY > 0){
-    loadBouquetPage();
-  }
-  else if(currentPage==="bouquet" && e.deltaY < 0){
-    loadFinalPage();
-  }
-});
+function startHearts(){
+  setInterval(()=>{
+    const heart=document.createElement("div");
+    heart.className="floating-heart";
+    heart.innerHTML="💖";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.animationDuration=(4+Math.random()*2)+"s";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),6000);
+  },400);
+}
+
+function startConfetti(){
+  const colors=["#ff2e88","#ffffff","#ffb6d9","#ff66b3"];
+  setInterval(()=>{
+    const piece=document.createElement("div");
+    piece.className="confetti-piece";
+    piece.style.left=Math.random()*100+"vw";
+    piece.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration=(3+Math.random()*2)+"s";
+    document.body.appendChild(piece);
+    setTimeout(()=>piece.remove(),5000);
+  },150);
+}
 
 </script>
-
 </body>
 </html>
