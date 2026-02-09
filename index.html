@@ -33,14 +33,13 @@ body{
   border-radius:30px;
   box-shadow:0 20px 50px rgba(0,0,0,0.15);
   position:relative;
-  transition:all 0.4s ease;
 }
 
 h1{
   font-family:'Playfair Display',serif;
   color:white;
   font-size:clamp(28px,6vw,42px);
-  margin-bottom:20px;
+  margin-bottom:15px;
 }
 
 .love-text{
@@ -130,7 +129,6 @@ button{
 
 let heartInterval, confettiInterval, roseInterval;
 let currentPage="start";
-let scrollHandlerAttached=false;
 
 function openLetter(){
   currentPage="question";
@@ -167,10 +165,8 @@ function setupButtons(){
   let scale=1;
 
   noBtn.addEventListener("click",function(){
-
     if(index<messages.length){
-      noBtn.textContent=messages[index];
-      index++;
+      noBtn.textContent=messages[index++];
     }else{
       noBtn.textContent="Still no? 😭";
     }
@@ -187,7 +183,6 @@ function setupButtons(){
 }
 
 function loadFinalPage(){
-
   currentPage="final";
   document.body.style.background="linear-gradient(160deg,#ffb6d9,#ffd6eb)";
   document.body.style.overflowY="auto";
@@ -201,29 +196,23 @@ function loadFinalPage(){
       <img id="finalPhoto" src="finalphoto.jpg.jpg">
       <p style="color:white;font-weight:600;">Scroll down ↓</p>
     </div>
-    <div style="height:100vh;"></div>
+    <div style="height:80vh;"></div>
   `;
 
   startHearts();
   startConfetti();
 
-  if(!scrollHandlerAttached){
-    window.addEventListener("scroll",handleScroll);
-    scrollHandlerAttached=true;
-  }
-}
-
-function handleScroll(){
-  if(currentPage==="final" && window.scrollY>180){
-    loadBouquetPage();
-  }
-  if(currentPage==="bouquet" && window.scrollY<20){
-    loadFinalPage();
-  }
+  window.onscroll=()=>{
+    if(currentPage==="final" && window.scrollY>150){
+      loadBouquetPage();
+    }
+    if(currentPage==="bouquet" && window.scrollY<10){
+      loadFinalPage();
+    }
+  };
 }
 
 function loadBouquetPage(){
-
   currentPage="bouquet";
 
   clearInterval(heartInterval);
@@ -231,24 +220,24 @@ function loadBouquetPage(){
   document.querySelectorAll(".floating-heart,.confetti-piece").forEach(el=>el.remove());
 
   document.body.style.background="black";
-  document.body.style.alignItems="center";
+  document.body.style.alignItems="flex-start";
   window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
-    <div style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;">
-      <h1 style="color:#ff4d9e;margin-bottom:10px;">
+    <div style="padding:40px 20px;">
+      <h1 style="color:#ff4d9e;">
         Heres ur flowers (sorry there not real)❤️
       </h1>
 
-      <p style="color:#ff4d9e;margin-bottom:20px;">
+      <p style="color:#ff4d9e;margin-bottom:15px;">
         Scroll up ↑
       </p>
 
       <img id="bouquetImg"
            src="bouquet.jpg"
-           style="width:100%;max-width:450px;border-radius:25px;cursor:pointer;">
+           style="width:100%;max-width:450px;border-radius:25px;cursor:pointer;display:block;margin:0 auto;">
 
-      <p style="color:#ff4d9e;margin-top:20px;font-weight:600;">
+      <p style="color:#ff4d9e;margin-top:15px;font-weight:600;">
         Tap the letter 💌
       </p>
     </div>
@@ -264,10 +253,10 @@ function startHearts(){
     heart.className="floating-heart";
     heart.innerHTML="💖";
     heart.style.left=Math.random()*100+"vw";
-    heart.style.animationDuration=(5+Math.random()*2)+"s";
+    heart.style.animationDuration="6s";
     document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),7000);
-  },600);
+    setTimeout(()=>heart.remove(),6000);
+  },700);
 }
 
 function startConfetti(){
@@ -277,10 +266,10 @@ function startConfetti(){
     piece.className="confetti-piece";
     piece.style.left=Math.random()*100+"vw";
     piece.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
-    piece.style.animationDuration=(5+Math.random()*2)+"s";
+    piece.style.animationDuration="6s";
     document.body.appendChild(piece);
-    setTimeout(()=>piece.remove(),7000);
-  },700);
+    setTimeout(()=>piece.remove(),6000);
+  },800);
 }
 
 function startRoseShower(){
@@ -294,12 +283,11 @@ function startRoseShower(){
     rose.style.pointerEvents="none";
     rose.style.animation="roseFall 8s linear forwards";
     document.body.appendChild(rose);
-    setTimeout(()=>rose.remove(),9000);
-  },1500);
+    setTimeout(()=>rose.remove(),8000);
+  },1800);
 }
 
 function openLoveLetter(){
-
   const overlay=document.createElement("div");
   overlay.style.position="fixed";
   overlay.style.top="0";
@@ -325,14 +313,8 @@ function openLoveLetter(){
   letter.style.position="relative";
 
   letter.innerHTML=`
-    <div id="closeBtn" style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:22px;font-weight:bold;">
-      ✕
-    </div>
-
-    <h2 style="color:#ff2e88;text-align:center;margin-bottom:20px;">
-      For You 💗
-    </h2>
-
+    <div id="closeBtn" style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:22px;font-weight:bold;">✕</div>
+    <h2 style="color:#ff2e88;text-align:center;margin-bottom:20px;">For You 💗</h2>
     <p style="line-height:1.7;font-size:17px;">
       Dear Alya,<br><br>
       (Write your real message here.)<br><br>
@@ -341,14 +323,10 @@ function openLoveLetter(){
     </p>
   `;
 
-  overlay.appendChildison is letter; // (This line was intentionally removed — ensuring no syntax error)
-
   overlay.appendChild(letter);
   document.body.appendChild(overlay);
 
-  document.getElementById("closeBtn").onclick=()=>{
-    overlay.remove();
-  };
+  document.getElementById("closeBtn").onclick=()=>overlay.remove();
 }
 
 </script>
