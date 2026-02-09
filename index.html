@@ -11,18 +11,21 @@
 body{
   margin:0;
   min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
   background:linear-gradient(160deg,#ffb6d9,#ffd6eb);
   font-family:'Poppins',sans-serif;
   text-align:center;
   overflow:hidden;
 }
 
+/* CENTERING MOVED HERE */
 #container{
   width:100%;
   max-width:520px;
+  margin:0 auto;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
 }
 
 .card{
@@ -41,6 +44,7 @@ h1{
   text-shadow:0 6px 20px rgba(0,0,0,0.25);
   margin-bottom:20px;
 }
+
 .love-text{
   font-family:'Playfair Display',serif;
   font-size:clamp(26px,5vw,38px);
@@ -48,6 +52,7 @@ h1{
   margin-bottom:10px;
   text-shadow:0 6px 20px rgba(255,46,136,0.4);
 }
+
 button{
   border:none;
   padding:14px 36px;
@@ -187,58 +192,57 @@ function setupButtons(){
     noBtn.style.top=Math.random()*60+"%";
   });
 
-    yesBtn.addEventListener("click",function(){
+  yesBtn.addEventListener("click",function(){
 
-  // unlock scrolling only now
-  document.body.style.overflowY = "auto";
-  document.body.style.alignItems = "flex-start";
+    document.body.style.overflowY = "auto";
+    document.getElementById("container").style.alignItems = "flex-start";
 
-  document.getElementById("container").innerHTML=`
-    <div class="card">
-      <div class="love-text">Love you💕</div>
-      <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
-      <img id="finalPhoto" src="finalphoto.jpg.jpg">
-      <p style="margin-top:20px;color:white;font-weight:600;">
-        Scroll for something special ↓
-      </p>
-    </div>
-
-    <div id="letterSection" style="
-      margin-top:120px;
-      padding:100px 20px;
-      min-height:100vh;
-      background:linear-gradient(to bottom,#ffd6eb,#fff0f8);
-      border-radius:40px 40px 0 0;
-      text-align:center;
-    ">
-      <h1 style="color:#ff2e88;">A little surprise 💌</h1>
-
-      <div id="letterEnvelope" style="
-        margin:40px auto;
-        width:200px;
-        height:140px;
-        background:#ff4fa3;
-        border-radius:20px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-family:'Playfair Display',serif;
-        font-size:24px;
-        color:white;
-        cursor:pointer;
-        box-shadow:0 15px 40px rgba(0,0,0,0.2);
-        transition:0.3s;
-      ">
-        Open
+    document.getElementById("container").innerHTML=`
+      <div class="card">
+        <div class="love-text">Love you💕</div>
+        <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
+        <img id="finalPhoto" src="finalphoto.jpg.jpg">
+        <p style="margin-top:20px;color:white;font-weight:600;">
+          Scroll for something special ↓
+        </p>
       </div>
-    </div>
-  `;
 
-  document.getElementById("letterEnvelope").addEventListener("click",openLoveLetter);
+      <div id="letterSection" style="
+        margin-top:120px;
+        padding:100px 20px;
+        min-height:100vh;
+        background:linear-gradient(to bottom,#ffd6eb,#fff0f8);
+        border-radius:40px 40px 0 0;
+        text-align:center;
+      ">
+        <h1 style="color:#ff2e88;">A little surprise 💌</h1>
 
-  startHearts();
-  startConfetti();
-});
+        <div id="letterEnvelope" style="
+          margin:40px auto;
+          width:200px;
+          height:140px;
+          background:#ff4fa3;
+          border-radius:20px;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          font-family:'Playfair Display',serif;
+          font-size:24px;
+          color:white;
+          cursor:pointer;
+          box-shadow:0 15px 40px rgba(0,0,0,0.2);
+          transition:0.3s;
+        ">
+          Open
+        </div>
+      </div>
+    `;
+
+    document.getElementById("letterEnvelope").addEventListener("click",openLoveLetter);
+
+    startHearts();
+    startConfetti();
+  });
 }
 
 function startHearts(){
@@ -308,7 +312,6 @@ function openLoveLetter(){
 
   document.body.appendChild(overlay);
 }
-
 </script>
 
 </body>
