@@ -33,18 +33,13 @@ body{
   border-radius:30px;
   box-shadow:0 20px 50px rgba(0,0,0,0.15);
   position:relative;
-  animation:fadeIn 0.6s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
 }
 
 h1{
   font-family:'Playfair Display',serif;
   color:white;
   font-size:clamp(28px,6vw,42px);
+  text-shadow:0 6px 20px rgba(0,0,0,0.25);
   margin-bottom:20px;
 }
 
@@ -53,6 +48,7 @@ h1{
   font-size:clamp(26px,5vw,38px);
   color:#ff2e88;
   margin-bottom:10px;
+  text-shadow:0 6px 20px rgba(255,46,136,0.4);
 }
 
 button{
@@ -67,12 +63,14 @@ button{
 .yes{
   background:linear-gradient(90deg,#ff4d9e,#ff2e88);
   color:white;
+  box-shadow:0 10px 25px rgba(255,46,136,0.4);
   transition:0.2s;
 }
 
 .no{
   background:#555;
   color:white;
+  transition:0.2s;
 }
 
 #mainPhoto,#finalPhoto{
@@ -81,6 +79,7 @@ button{
   object-fit:cover;
   border-radius:25px;
   margin-bottom:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.25);
 }
 
 .pulse{
@@ -96,7 +95,7 @@ button{
 .floating-heart{
   position:fixed;
   bottom:-20px;
-  font-size:26px;
+  font-size:24px;
   animation:floatUp linear forwards;
   pointer-events:none;
 }
@@ -108,8 +107,8 @@ button{
 .confetti-piece{
   position:fixed;
   top:-20px;
-  width:8px;
-  height:14px;
+  width:6px;
+  height:12px;
   animation:fall linear forwards;
   pointer-events:none;
 }
@@ -118,12 +117,8 @@ button{
   to{transform:translateY(120vh) rotate(360deg);}
 }
 
-.rose{
-  position:fixed;
-  top:-20px;
-  font-size:24px;
-  animation:fall 4s linear forwards;
-  pointer-events:none;
+@keyframes roseFall{
+  to{transform:translateY(120vh);opacity:0;}
 }
 </style>
 </head>
@@ -140,8 +135,9 @@ button{
 
 <script>
 
-let currentPage="start";
-let scrollActive=false;
+let heartInterval;
+let confettiInterval;
+let roseInterval;
 
 function openLetter(){
   document.getElementById("container").innerHTML=`
@@ -174,10 +170,10 @@ function setupButtons(){
   let scale=1;
 
   noBtn.addEventListener("click",function(){
-    if(index<messages.length){
-      noBtn.textContent=messages[index];
+    if(index < messages.length){
+      noBtn.textContent = messages[index];
       index++;
-    } else{
+    } else {
       noBtn.textContent="Still no? 😭";
     }
 
@@ -189,86 +185,111 @@ function setupButtons(){
     noBtn.style.top=Math.random()*60+"%";
   });
 
-  yesBtn.addEventListener("click",loadFinalPage);
+  yesBtn.addEventListener("click",function(){
+
+    document.body.style.overflowY="auto";
+    document.body.style.alignItems="flex-start";
+
+    document.getElementById("container").innerHTML=`
+      <div class="card">
+        <div class="love-text">Love you💕</div>
+        <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
+        <img id="finalPhoto" src="finalphoto.jpg.jpg">
+        <p style="margin-top:20px;color:white;font-weight:600;">
+          Scroll down ↓
+        </p>
+      </div>
+    `;
+
+    startHearts();
+    startConfetti();
+
+    window.addEventListener("scroll", handleScroll);
+  });
 }
 
-function loadFinalPage(){
-  currentPage="final";
-  document.body.style.background="linear-gradient(160deg,#ffb6d9,#ffd6eb)";
-  document.body.style.overflowY="auto";
-  document.body.style.alignItems="flex-start";
-  window.scrollTo(0,0);
-
-  document.getElementById("container").innerHTML=`
-    <div class="card">
-      <div class="love-text">Love you💕</div>
-      <h1>You had no choice anw 😌💞<br><br>Guess we have plans now 😁</h1>
-      <img id="finalPhoto" src="finalphoto.jpg.jpg">
-      <p style="color:white;font-weight:600;">Scroll down ↓</p>
-    </div>
-    <div style="height:500px;"></div>
-  `;
-
-  startHearts();
-  startConfetti();
-
-  if(!scrollActive){
-    window.addEventListener("scroll",handleScroll);
-    scrollActive=true;
+function handleScroll(){
+  if(window.scrollY > 200){
+    window.removeEventListener("scroll", handleScroll);
+    loadBouquetPage();
   }
 }
 
 function loadBouquetPage(){
-  currentPage="bouquet";
+
+  clearInterval(heartInterval);
+  clearInterval(confettiInterval);
+  document.querySelectorAll(".floating-heart,.confetti-piece").forEach(el=>el.remove());
+
   document.body.style.background="black";
   window.scrollTo(0,0);
 
   document.getElementById("container").innerHTML=`
-    <div class="card" style="background:transparent; box-shadow:none;">
-      <h1 style="color:#ff2e88;">
+    <div class="card" style="background:transparent;box-shadow:none;">
+      <h1 style="color:#ff4d9e;">
         Heres ur flowers (sorry there not real)❤️
       </h1>
 
-      <div style="position:relative; display:inline-block;">
-        <img id="roseImg" src="bouquet.jpg" style="width:100%; border-radius:25px; cursor:pointer;">
+      <div style="position:relative;display:inline-block;">
+        <img src="bouquet.jpg" style="width:100%;border-radius:25px;">
 
-        <div onclick="openLoveLetter()" 
-             style="position:absolute; top:10%; right:12%; width:120px; height:90px; cursor:pointer;">
+        <div onclick="openLoveLetter()"
+             style="position:absolute;top:12%;right:15%;width:100px;height:70px;cursor:pointer;">
         </div>
 
-        <div style="position:absolute; top:3%; right:5%; color:#ff2e88; font-weight:600;">
+        <div style="position:absolute;top:5%;right:5%;color:#ff4d9e;font-weight:600;">
           ← Click the note 💌
         </div>
       </div>
-
-      <div style="height:500px;"></div>
     </div>
   `;
 
-  document.getElementById("roseImg").addEventListener("click",dropRoses);
+  startRoseShower();
 }
 
-function handleScroll(){
-  if(currentPage==="final" && window.scrollY>200){
-    loadBouquetPage();
-  }
-  else if(currentPage==="bouquet" && window.scrollY<50){
-    loadFinalPage();
-  }
+function startHearts(){
+  heartInterval=setInterval(()=>{
+    const heart=document.createElement("div");
+    heart.className="floating-heart";
+    heart.innerHTML="💖";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.animationDuration=(5+Math.random()*3)+"s";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),8000);
+  },700);
 }
 
-function dropRoses(){
-  for(let i=0;i<20;i++){
+function startConfetti(){
+  const colors=["#ff2e88","#ffffff","#ffb6d9"];
+  confettiInterval=setInterval(()=>{
+    const piece=document.createElement("div");
+    piece.className="confetti-piece";
+    piece.style.left=Math.random()*100+"vw";
+    piece.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration=(5+Math.random()*3)+"s";
+    document.body.appendChild(piece);
+    setTimeout(()=>piece.remove(),8000);
+  },500);
+}
+
+function startRoseShower(){
+  roseInterval=setInterval(()=>{
     const rose=document.createElement("div");
-    rose.className="rose";
     rose.innerHTML="🌹";
+    rose.style.position="fixed";
+    rose.style.top="-30px";
     rose.style.left=Math.random()*100+"vw";
+    rose.style.fontSize=(20+Math.random()*15)+"px";
+    rose.style.opacity="0.8";
+    rose.style.pointerEvents="none";
+    rose.style.animation=`roseFall ${6+Math.random()*4}s linear forwards`;
     document.body.appendChild(rose);
-    setTimeout(()=>rose.remove(),4000);
-  }
+    setTimeout(()=>rose.remove(),10000);
+  },1200);
 }
 
 function openLoveLetter(){
+
   const overlay=document.createElement("div");
   overlay.style.position="fixed";
   overlay.style.top="0";
@@ -282,12 +303,23 @@ function openLoveLetter(){
   overlay.style.zIndex="9999";
 
   overlay.innerHTML=`
-    <div style="width:85%; max-width:420px; background:white; padding:30px; border-radius:25px; font-family:'Playfair Display',serif; position:relative;">
+    <div style="
+      width:85%;
+      max-width:420px;
+      background:white;
+      padding:30px;
+      border-radius:25px;
+      font-family:'Playfair Display',serif;
+      color:#333;
+      position:relative;
+    ">
       <div style="position:absolute;right:15px;top:10px;cursor:pointer;font-size:20px;"
-           onclick="document.body.removeChild(this.closest('div').parentElement)">
+           onclick="this.closest('div').parentElement.remove()">
         ✕
       </div>
+
       <h2 style="color:#ff2e88;text-align:center;">For You 💗</h2>
+
       <p style="margin-top:20px;line-height:1.6;">
         Dear Alya,<br><br>
         (Write your real message here.)<br><br>
@@ -296,34 +328,11 @@ function openLoveLetter(){
       </p>
     </div>
   `;
+
   document.body.appendChild(overlay);
 }
 
-function startHearts(){
-  setInterval(()=>{
-    const heart=document.createElement("div");
-    heart.className="floating-heart";
-    heart.innerHTML="💖";
-    heart.style.left=Math.random()*100+"vw";
-    heart.style.animationDuration=(4+Math.random()*2)+"s";
-    document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),6000);
-  },400);
-}
-
-function startConfetti(){
-  const colors=["#ff2e88","#ffffff","#ffb6d9","#ff66b3"];
-  setInterval(()=>{
-    const piece=document.createElement("div");
-    piece.className="confetti-piece";
-    piece.style.left=Math.random()*100+"vw";
-    piece.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
-    piece.style.animationDuration=(3+Math.random()*2)+"s";
-    document.body.appendChild(piece);
-    setTimeout(()=>piece.remove(),5000);
-  },150);
-}
-
 </script>
+
 </body>
 </html>
