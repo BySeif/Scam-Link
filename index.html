@@ -186,16 +186,17 @@ function setupButtons(){
     noBtn.style.top=Math.random()*60+"%";
   });
 
-  yesBtn.addEventListener("click",function(){
-  document.getElementById("container").innerHTML=`
-    <div class="card">
-      <div class="love-text">Love you💕</div>
-      <h1>You had no choice 😌💕<br><br>Guess we have plans now 😁</h1>
-      <img id="finalPhoto" src="finalphoto.jpg.jpg">
-    </div>
-  `;
-  startHearts();
-  startConfetti()
+    yesBtn.addEventListener("click",function(){
+    document.getElementById("container").innerHTML=`
+      <div class="card">
+        <div class="love-text">Love you💕</div>
+        <h1>You had no choice 😌💕<br><br>Guess we have plans now 😁</h1>
+        <img id="finalPhoto" src="finalphoto.jpg.jpg">
+      </div>
+    `;
+    startHearts();
+    startConfetti();
+  });
 }
 
 function startHearts(){
